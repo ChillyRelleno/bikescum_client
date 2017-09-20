@@ -21,6 +21,8 @@
     "node-sass": "^4.3.0",
     "react": "15.6.1",
     "react-dom": "15.4.2",
+    "react-google-maps": "^8.2.0",
+    "recompose": "^0.25.0",
     "sass-loader": "^6.0.2"
   },
   "devDependencies": {
