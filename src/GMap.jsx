@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import GoogleMapReact from 'google-map-react';
-
+import MapMarker from './MapMarker.jsx';
 //import d3 from 'd3';
 //import reactD3Map from 'react-d3-map';
 //import reactMaps from 'react-google-maps';
@@ -47,10 +47,10 @@ class GMap extends React.Component {
         center={this.center}
         zoom={8}
       >
-      <AnyReactComponent
-          lat={59.955413}
-          lng={30.337844}
-          text={'Kreyser Avrora'}
+      <MapMarker
+          lat={45.5231}
+          lng={-122.6765}
+          text={'Hipsters'}
         />
       </GoogleMapReact>
     );
