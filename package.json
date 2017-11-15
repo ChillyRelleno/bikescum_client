@@ -20,9 +20,11 @@
   "dependencies": {
     "google-map-react": "^0.24.0",
     "node-sass": "^4.3.0",
+    "prop-types": "^15.5.10",
     "react": "15.4.2",
     "react-addons-test-utils": "15.4.2",
     "react-dom": "15.4.2",
+    "react-file-reader-input": "^1.1.4",
     "react-pure-render": "^1.0.2",
     "sass-loader": "^6.0.2"
   },

@@ -2,21 +2,33 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import GoogleMapReact from 'google-map-react';
 import MapMarker from './MapMarker.jsx';
-//import d3 from 'd3';
-//import reactD3Map from 'react-d3-map';
-//import reactMaps from 'react-google-maps';
-/*import { compose, withProps } from "recompose";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  KmlLayer,
-} from "react-google-maps";*/
+import shouldPureComponentUpdate from 'react-pure-render/function';
+import PureComponent from 'react-pure-render/component';
+import {K_SIZE} from './MapMarkerStyles.js';
+import PropTypes from 'prop-types';
+import FileInput from './FileInputClass.jsx';
+
+//import FileReaderInput from 'react-file-reader-input';
 
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-class GMap extends React.Component {
-  //var title = "GPX AQI Fire Map";
+//const AnyReactComponent = ({ text }) => <div>{text}</div>;
+class GMap extends PureComponent { //React.Component {
+  static propTypes = {
+    center: PropTypes.array,
+    zoom: PropTypes.number,
+    MapMarkerCoords: PropTypes.any,
+    hasData: PropTypes.bool
+  };
+
+  static defaultProps = {
+    center: [59.938043, 30.337157],
+    zoom: 9,
+    MapMarkerCoords: {lat: 45.5231, lng: -122.6765},
+    hasData: false
+  };
+
+//  shouldComponentUpdate = shouldPureComponentUpdate;
+
   constructor(props) {
     super(props);
     this.center = props.center;    
@@ -24,18 +36,23 @@ class GMap extends React.Component {
   }//constructor
 
 
-
-  componentDidMount() {
-
-  }
-
+ /* componentDidMount() {  }
   componentDidUpdate() {
+  }*/
 
+
+ /* handleFile = (e, results) => {
+    results.forEach(result => {
+      const [e, file] = result;
+      this.props.dispatch(uploadFile(e.target.result));
+      console.log(`Successfully uploaded ${file.name}!`);
+    });
+    props.hasData = true;
   }
+*/
 
   render() {
-////[59.838043, 30.337157]}
-
+   //if (this.props.hasData != false) {
     return (
       <GoogleMapReact 
         defaultCenter={this.props.center}
@@ -43,19 +60,33 @@ class GMap extends React.Component {
         bootstrapURLKeys={{
           key:"AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
         }}
-        style={{height:"400px"}}
-        center={this.center}
+        style={{height:"100px"}}
+        center={this.props.center}
         zoom={8}
+        hoverDistance={K_SIZE/2}
+//        distanceToMouse={this._distanceToMouse}
       >
       <MapMarker
           lat={45.5231}
-          lng={-122.6765}
+          lng={-122.9765}
           text={'Hipsters'}
         />
+        <FileInput as="text" id="gpx-file-input" onChange={this.handleFile}>
+       {/*     <button>Select File</button>*/}
+        </FileInput>
+
       </GoogleMapReact>
     );
-  }
-
+    //}
+   //else { 
+{/*   return (
+      <FileReaderInput as="text" id="gpx-file-input" onChange={this.handleFile}>
+        <button>Select File</button>
+      </FileReaderInput>
+    );
+   //}//else
+  }*/}
+};
   componentWillUnmount() {
 
   }
