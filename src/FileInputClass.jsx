@@ -1,8 +1,10 @@
 //import React from 'react';
 import React, { Component } from 'react';
+//import GoogleMapReact from 'google-map-react';
 import FileReaderInput from 'react-file-reader-input';
 import GPXParser from './loadgpx.js';
 import GpxTrack from './GpxTrack.jsx';
+import GMap from './GMap.jsx';
 
 class FileInputComponent extends React.Component {
 
@@ -32,9 +34,6 @@ class FileInputComponent extends React.Component {
     } else {
         this.parseXml = function() { return null; }
     }
-  //  this.handleChange = this.handleChange.bind(this);
-//    this.props.onChange = this.handleChange;//.bind(this);
-//    this.onChange = this.onChange.bind(this);
   }//constructor
 
   loadGPXFileIntoGoogleMap = (map, file) => {
@@ -55,9 +54,7 @@ class FileInputComponent extends React.Component {
   }//loadGPXFileIntoGoogleMap
 
   drawGPX = (file) => {
-    //get map by id
-    var map = new google.maps.Map(document.getElementById("map"));
-    var parser = this.loadGPXFileIntoGoogleMap(map, file);
+    var parser = this.loadGPXFileIntoGoogleMap(this.props.map, file);
     
   }//drawGPX
 
@@ -78,21 +75,12 @@ class FileInputComponent extends React.Component {
     //get fire boundary data 
     //cull fire boundary data within gpx bounds
 
-//     this.setState({isFileSelected: true});
-    //});
   }
 
   componentDidMount() {
-    //console.log('GrandChild did mount.');
-//    this.setState({isFileSelected: true}
   }
 
   render() {
-    /*this.handleChange =*/
-//    this.handleChange = this.handleChange.bind(this);
-
-//    onChange=this.handleChange.bind(this);
-
     var toDisplay;
     var gpx, selectFile;
     if (this.state.isFileSelected == true) {
@@ -112,11 +100,7 @@ class FileInputComponent extends React.Component {
        );
        toDisplay = selectFile;
     }//else
-//    toDisplay = selectFile + gpx;
- 
-//    if (this.state.isFileSelected == false)
       return toDisplay;
-//    else return null;
   }
 }
 export default FileInputComponent;

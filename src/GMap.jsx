@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import GoogleMapReact from 'google-map-react';
-import MapMarker from './MapMarker.jsx';
-import shouldPureComponentUpdate from 'react-pure-render/function';
-import PureComponent from 'react-pure-render/component';
+import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+//import MapMarker from './MapMarker.jsx';
+//import shouldPureComponentUpdate from 'react-pure-render/function';
+//import PureComponent from 'react-pure-render/component';
 import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
 import FileInput from './FileInputClass.jsx';
-
+//import google-maps from 'google-maps';
 //import FileReaderInput from 'react-file-reader-input';
 
 
-//const AnyReactComponent = ({ text }) => <div>{text}</div>;
-class GMap extends PureComponent { //React.Component {
+class GMap extends React.Component {
   static propTypes = {
     center: PropTypes.array,
     zoom: PropTypes.number,
@@ -27,34 +26,50 @@ class GMap extends PureComponent { //React.Component {
     hasData: false
   };
 
-//  shouldComponentUpdate = shouldPureComponentUpdate;
 
   constructor(props) {
     super(props);
     this.center = props.center;    
-  //    this.map_id = props.map_id;//"#mapd3";
   }//constructor
 
 
- /* componentDidMount() {  }
-  componentDidUpdate() {
-  }*/
-
-
- /* handleFile = (e, results) => {
-    results.forEach(result => {
-      const [e, file] = result;
-      this.props.dispatch(uploadFile(e.target.result));
-      console.log(`Successfully uploaded ${file.name}!`);
-    });
-    props.hasData = true;
-  }
-*/
+  componentDidMount() {  };
+  componentDidUpdate() { };
+ 
 
   render() {
-   //if (this.props.hasData != false) {
+    var floatStyle = {
+        position: 'absolute', top: '10px', left: '10px', zIndex: 99 
+	};
+    var mapStyle = { position: 'relative', height: '92%', width: '95%'};
     return (
-      <GoogleMapReact 
+        <div id="map">
+	  <Map google = {this.props.google} zoom={8} style={mapStyle}>
+            <FileInput as="text" id="gpx-file-input" style={floatStyle} />
+	  </Map>
+        </div>  
+
+    );
+  };
+
+  componentWillUnmount() {
+
+  }
+}//class
+
+GMap.propTypes = {
+ title: React.PropTypes.string
+ ,map_id: React.PropTypes.string
+ // data: React.PropTypes.object
+ //,domain: React.PropTypes.object
+};
+
+//export default GMap;
+export default GoogleApiWrapper({
+  apiKey: ("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
+})(GMap)
+
+   /* <GoogleMapReact 
         defaultCenter={this.props.center}
         defaultZoom={this.props.zoom}
         bootstrapURLKeys={{
@@ -71,35 +86,8 @@ class GMap extends PureComponent { //React.Component {
           lng={-122.9765}
           text={'Hipsters'}
         />
-        <FileInput as="text" id="gpx-file-input" >
-       {/*     <button>Select File</button>
-                onChange={this.handleFile} 
-        */}
         </FileInput>
 
       </GoogleMapReact>
-    );
-    //}
-   //else { 
-{/*   return (
-      <FileReaderInput as="text" id="gpx-file-input" onChange={this.handleFile}>
-        <button>Select File</button>
-      </FileReaderInput>
-    );
-   //}//else
-  }*/}
-};
-  componentWillUnmount() {
-
-  }
-}//class
-
-GMap.propTypes = {
- title: React.PropTypes.string
- ,map_id: React.PropTypes.string
- // data: React.PropTypes.object
- //,domain: React.PropTypes.object
-};
-
-export default GMap;
+*/
 
