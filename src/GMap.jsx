@@ -6,7 +6,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 //import PureComponent from 'react-pure-render/component';
 import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
-import FileInput from './FileInputClass.jsx';
+import GpxFileComponent from './GpxFileComponent.jsx';
 //import google-maps from 'google-maps';
 //import FileReaderInput from 'react-file-reader-input';
 
@@ -41,11 +41,12 @@ class GMap extends React.Component {
     var floatStyle = {
         position: 'absolute', top: '10px', left: '10px', zIndex: 99 
 	};
-    var mapStyle = { position: 'relative', height: '92%', width: '95%'};
+    var mapStyle = { position: 'relative', height: '95%', width: '99%', padding: '0', margin: '0'};
+    //var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
     return (
-        <div id="map">
+        <div id="mapContainer">
 	  <Map google = {this.props.google} zoom={8} style={mapStyle}>
-            <FileInput as="text" id="gpx-file-input" style={floatStyle} />
+            <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
         </div>  
 
@@ -86,7 +87,7 @@ export default GoogleApiWrapper({
           lng={-122.9765}
           text={'Hipsters'}
         />
-        </FileInput>
+        </GpxFileComponent>
 
       </GoogleMapReact>
 */

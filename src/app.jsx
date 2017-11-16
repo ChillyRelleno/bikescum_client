@@ -25,20 +25,15 @@ export default class App extends React.Component {
   render() {
     return (
      <div>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
-    async ></script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
+        async ></script>
 
-{/*      <div>
-        <FileInput as="text" id="gpx-file-input" onChange={this.handleFile}>
-            <button>Select File</button>
-        </FileInput>
-      </div><div id="map">*/}
         <GMap 
            style={{height:"400px", width:"400px"}} 
 
            center={[45.5231,-122.6765]}
         />
-     </div>
+    </div>
     )
   }
 
@@ -46,3 +41,4 @@ export default class App extends React.Component {
     
   }
 }
+
