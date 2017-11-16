@@ -2,14 +2,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 //import MapMarker from './MapMarker.jsx';
-//import shouldPureComponentUpdate from 'react-pure-render/function';
-//import PureComponent from 'react-pure-render/component';
 import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
-//import google-maps from 'google-maps';
-//import FileReaderInput from 'react-file-reader-input';
-
 
 class GMap extends React.Component {
   static propTypes = {
@@ -20,7 +15,7 @@ class GMap extends React.Component {
   };
 
   static defaultProps = {
-    center: {  lat: 45.5231,  lng: -122.9765 },//[59.938043, 30.337157],
+    center: {  lat: 45.5231,  lng: -122.9765 },
     zoom: 9,
     MapMarkerCoords: {lat: 45.5231, lng: -122.6765},
     hasData: false
@@ -33,8 +28,8 @@ class GMap extends React.Component {
   }//constructor
 
 
-  componentDidMount() {  };
-  componentDidUpdate() { };
+  componentDidMount() {  }
+  componentDidUpdate() { }
  
 
   render() {
@@ -53,17 +48,16 @@ class GMap extends React.Component {
 
     );
   };
-//WORKS as center in render: initialCenter={{  lat: 45.5231,  lng: -122.9765 }}
+  //WORKS as center in render: initialCenter={{  lat: 45.5231,  lng: -122.9765 }}
+
   componentWillUnmount() {
 
   }
 }//class
 
 GMap.propTypes = {
- title: React.PropTypes.string
- ,map_id: React.PropTypes.string
- // data: React.PropTypes.object
- //,domain: React.PropTypes.object
+ title: React.PropTypes.string,
+ map_id: React.PropTypes.string
 };
 
 //export default GMap;
@@ -71,25 +65,4 @@ export default GoogleApiWrapper({
   apiKey: ("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
 })(GMap)
 
-   /* <GoogleMapReact 
-        defaultCenter={this.props.center}
-        defaultZoom={this.props.zoom}
-        bootstrapURLKeys={{
-          key:"AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
-        }}
-        style={{height:"100px"}}
-        center={this.props.center}
-        zoom={8}
-        hoverDistance={K_SIZE/2}
-//        distanceToMouse={this._distanceToMouse}
-      >
-      <MapMarker
-          lat={45.5231}
-          lng={-122.9765}
-          text={'Hipsters'}
-        />
-        </GpxFileComponent>
-
-      </GoogleMapReact>
-*/
 

@@ -8,47 +8,35 @@ class GpxFileComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {isFileSelected : false,
-		  gpx : null,
-		  boundingBox : null};
-
-    //Choose how to parse based on browser
-    if (window.DOMParser) {
-        this.parseXml = function(xmlStr) {
-            return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
-        };
-    } else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
-        this.parseXml = function(xmlStr) {
-            var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.async = "false";
-            xmlDoc.loadXML(xmlStr);
-            return xmlDoc;
-        };
-    } else {
-        this.parseXml = function() { return null; }
-    }
+    this.state = {
+      isFileSelected : false,
+      gpx : null,
+      boundingBox : null
+    };
+    this.parseXml = this.chooseXmlParser();
   }//constructor
 
   loadGPXFileIntoGoogleMap = (map, file) => {
     var data = file[0][0].target.result;
     var xml = this.parseXml(data);//$.parseXML(data);
     if (xml !== null) {
+      //Setup parser
       var parser = new GPXParser(xml, map);
       parser.setTrackColour("#ff0000");     // Set the track line colour
       parser.setTrackWidth(5);          // Set the track line width
       parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
+
+      //prepare for draw, change state
       var fileBoundingBox = parser.centerAndZoom(xml);
       this.setState({gpx: parser, isFileSelected: true, boundingBox: fileBoundingBox});
+
+      //Draw with parser library, to replace with own overlay
       parser.addTrackpointsToMap();         // Add the trackpoints
       parser.addRoutepointsToMap();         // Add the routepoints
       parser.addWaypointsToMap();           // Add the waypoints
 
     }//if xml loaded
   }//loadGPXFileIntoGoogleMap
-
-  //drawGPX = (file) => {
-  //  var parser = this.loadGPXFileIntoGoogleMap(this.props.map, file);    
-  //}//drawGPX
 
   handleChange = function(e, results) {
     console.log('OnChange Fired, results = ');
@@ -59,20 +47,10 @@ class GpxFileComponent extends React.Component {
     });
     //Plot gpx path
     var parser = this.loadGPXFileIntoGoogleMap(this.props.map, results);
-    //this.drawGPX(results);//.bind(this);
-
-    //Calculate bounds (or get from gpx lib)
-    // --- stored in this.state.boundingbox ---
-    //get AQI data within bounds
-
-    //get fire boundary data 
-
-    //cull fire boundary data within gpx bounds
-
-  }
+  }//handleChange
 
   componentDidMount() {
-  }
+  }//componentDidMount
 
   render() {
     var toDisplay;
@@ -93,11 +71,26 @@ class GpxFileComponent extends React.Component {
        toDisplay = selectFile;
     }//else
       return toDisplay;
-  }
-}
-export default GpxFileComponent;
- /*
-          <label htmlFor="my-file-input">Upload a File:</label>
+  }//render
 
-            onChange={(evt, results) => this.handleChange(evt, results).bind(this)}>
-*/
+  chooseXmlParser = function() {
+    //Choose how to parse based on browser
+    if (window.DOMParser) {
+        return function(xmlStr) {
+            return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
+        };
+    } else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
+        return function(xmlStr) {
+            var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(xmlStr);
+            return xmlDoc;
+        };
+    } else {
+        return function() { return null; }
+    }
+  }//chooseXmlParser
+
+
+}//component
+export default GpxFileComponent;
