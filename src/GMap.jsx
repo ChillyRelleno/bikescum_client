@@ -20,7 +20,7 @@ class GMap extends React.Component {
   };
 
   static defaultProps = {
-    center: [59.938043, 30.337157],
+    center: {  lat: 45.5231,  lng: -122.9765 },//[59.938043, 30.337157],
     zoom: 9,
     MapMarkerCoords: {lat: 45.5231, lng: -122.6765},
     hasData: false
@@ -45,14 +45,15 @@ class GMap extends React.Component {
     //var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
     return (
         <div id="mapContainer">
-	  <Map google = {this.props.google} zoom={8} style={mapStyle}>
+	  <Map google={this.props.google} zoom={8} style={mapStyle}
+	      initialCenter={this.props.center} >
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
         </div>  
 
     );
   };
-
+//WORKS as center in render: initialCenter={{  lat: 45.5231,  lng: -122.9765 }}
   componentWillUnmount() {
 
   }

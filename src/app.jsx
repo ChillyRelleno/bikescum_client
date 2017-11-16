@@ -31,7 +31,7 @@ export default class App extends React.Component {
         <GMap 
            style={{height:"400px", width:"400px"}} 
 
-           center={[45.5231,-122.6765]}
+           center={{  lat: 45.5231,  lng: -122.9765 }}
         />
     </div>
     )
