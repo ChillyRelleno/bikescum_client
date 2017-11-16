@@ -1,23 +1,16 @@
-//import React from 'react';
 import React, { Component } from 'react';
-//import GoogleMapReact from 'google-map-react';
 import FileReaderInput from 'react-file-reader-input';
 import GPXParser from './loadgpx.js';
-//import GpxTrack from './GpxTrack.jsx';
 import GMap from './GMap.jsx';
+import AqiComponent from './AqiComponent.jsx';
 
 class GpxFileComponent extends React.Component {
-
-//  getInitialState = function() {
-//    return {
-//      isFileSelected : false
-//    };
-//  };
 
   constructor(props) {
     super(props);
     this.state = {isFileSelected : false,
-		  gpx : null};
+		  gpx : null,
+		  boundingBox : null};
 
     //Choose how to parse based on browser
     if (window.DOMParser) {
@@ -44,13 +37,13 @@ class GpxFileComponent extends React.Component {
       parser.setTrackColour("#ff0000");     // Set the track line colour
       parser.setTrackWidth(5);          // Set the track line width
       parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
-      this.boundingbox = parser.centerAndZoom(xml);
-      this.setState({gpx: parser, isFileSelected: true})
+      var fileBoundingBox = parser.centerAndZoom(xml);
+      this.setState({gpx: parser, isFileSelected: true, boundingBox: fileBoundingBox});
       parser.addTrackpointsToMap();         // Add the trackpoints
       parser.addRoutepointsToMap();         // Add the routepoints
       parser.addWaypointsToMap();           // Add the waypoints
 
-    }
+    }//if xml loaded
   }//loadGPXFileIntoGoogleMap
 
   //drawGPX = (file) => {
@@ -69,7 +62,7 @@ class GpxFileComponent extends React.Component {
     //this.drawGPX(results);//.bind(this);
 
     //Calculate bounds (or get from gpx lib)
-    // --- stored in this.boundingbox ---
+    // --- stored in this.state.boundingbox ---
     //get AQI data within bounds
 
     //get fire boundary data 
@@ -85,13 +78,11 @@ class GpxFileComponent extends React.Component {
     var toDisplay;
     var selectFile;
     if (this.state.isFileSelected == true) {
-	//gpx = (<GpxTrack track={this.state.gpx} />);
         selectFile = null;
-        toDisplay = null; //for now, display info later
+	toDisplay = ( <AqiComponent boundingBox = {this.state.boundingBox}/> );
     }
     else {
-      //gpx = null;
-      var selectFile = (
+      selectFile = (
         <form>
           <FileReaderInput as="text" id="gpx-file-input"
 	      onChange={this.handleChange.bind(this)}>
