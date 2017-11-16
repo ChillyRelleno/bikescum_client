@@ -71,8 +71,10 @@ class GMap extends PureComponent { //React.Component {
           lng={-122.9765}
           text={'Hipsters'}
         />
-        <FileInput as="text" id="gpx-file-input" onChange={this.handleFile}>
-       {/*     <button>Select File</button>*/}
+        <FileInput as="text" id="gpx-file-input" >
+       {/*     <button>Select File</button>
+                onChange={this.handleFile} 
+        */}
         </FileInput>
 
       </GoogleMapReact>

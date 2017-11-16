@@ -29,9 +29,9 @@ export default class App extends React.Component {
         <FileInput as="text" id="gpx-file-input" onChange={this.handleFile}>
             <button>Select File</button>
         </FileInput>
-      </div>*/}<div>
+      </div>*/}<div id="map">
         <GMap 
-           style={{height:"100px", width:"100px"}} 
+           style={{height:"400px", width:"400px"}} 
 
            center={[45.5231,-122.6765]}
         />
