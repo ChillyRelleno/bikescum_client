@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import togeojson from './lib/togeojson.js';
 //import FileReaderInput from 'react-file-reader-input';
 //import GPXParser from './loadgpx.js';
 //import GMap from './GMap.jsx';

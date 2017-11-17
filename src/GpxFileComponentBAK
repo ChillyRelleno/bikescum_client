@@ -5,7 +5,6 @@ import GMap from './GMap.jsx';
 import AqiComponent from './AqiComponent.jsx';
 import toGeoJSON from './lib/togeojson.js';
 
-
 class GpxFileComponent extends React.Component {
 
   constructor(props) {
@@ -13,36 +12,36 @@ class GpxFileComponent extends React.Component {
     this.state = {
       isFileSelected : false,
       gpx : null,
-      boundingBox : null
+      boundingBox : null,
+      geoJson : null
     };
     this.parseXml = this.chooseXmlParser();
   }//constructor
 
   loadGPXFileIntoGoogleMap = (map, file) => {
     var data = file[0][0].target.result;
-    var xml = this.parseXml(data);//$.parseXML(data);
-    if (xml !== null) {
-      //Setup parser
-      var parser = new GPXParser(xml, map);
+    var xml = this.parseXml(data);
+    //Setup parser
+    var parser = new GPXParser(xml, map);
+    //parser.setTrackColour("#ff0000");     // Set the track line colour
+    //parser.setTrackWidth(5);          // Set the track line width
+    //parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
 
-      //prepare for draw, change state
-      var fileBoundingBox = parser.centerAndZoom(xml);
-      this.setState({gpx: parser, isFileSelected: true, boundingBox: fileBoundingBox});
-      var geodraw = toGeoJSON.gpx(xml);
-      geodraw.features[0].properties.name = "track";
-      geodraw.features[0].properties.color = "red";
+    //prepare for draw, change state
+    var fileBoundingBox = parser.centerAndZoom(xml);
+    //var geoData = toGeoJSON.gpx(xml);
+    this.setState({gpx: parser, isFileSelected: true, boundingBox: fileBoundingBox});//, geoJson: geoData});
 
-      console.log(geodraw);
-      this.props.map.data.addListener('addfeature', this.setFeatureColor.bind(this));
-      
-      this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
-      console.log(this.props.map.data.getFeatureById("track"));
+      //this.props.map.data.loadGeoJson(geoData);
+
+      //Draw with parser library, to replace with own overlay
+      //parser.addTrackpointsToMap();         // Add the trackpoints
+      //parser.addRoutepointsToMap();         // Add the routepoints
+      //parser.addWaypointsToMap();           // Add the waypoints
 
     }//if xml loaded
   }//loadGPXFileIntoGoogleMap
-  setFeatureColor = function (event) {
-    this.props.map.data.overrideStyle(event.feature, {strokeColor:event.feature.getProperty('color')});
-  }
+
   handleChange = function(e, results) {
     console.log('OnChange Fired, results = ');
     console.log(results);
@@ -62,7 +61,9 @@ class GpxFileComponent extends React.Component {
     var selectFile;
     if (this.state.isFileSelected == true) {
         selectFile = null;
+	
 	toDisplay = ( <AqiComponent boundingBox = {this.state.boundingBox}/> );
+	
     }
     else {
       selectFile = (
