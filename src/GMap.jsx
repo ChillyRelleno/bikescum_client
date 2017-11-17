@@ -36,7 +36,7 @@ class GMap extends React.Component {
     var floatStyle = {
         position: 'absolute', top: '10px', left: '10px', zIndex: 99 
 	};
-    var mapStyle = { position: 'relative', height: '95%', width: '99%', padding: '0', margin: '0'};
+    var mapStyle = { position: 'relative', height: '90%', width: '99%', padding: '0', margin: '0'};
     //var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
     return (
         <div id="mapContainer">

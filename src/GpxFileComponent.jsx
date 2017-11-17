@@ -3,6 +3,7 @@ import FileReaderInput from 'react-file-reader-input';
 import GPXParser from './loadgpx.js';
 import GMap from './GMap.jsx';
 import AqiComponent from './AqiComponent.jsx';
+import FirePerimeterComponent from './FirePerimeterComponent.jsx';
 import toGeoJSON from './lib/togeojson.js';
 
 
@@ -12,22 +13,32 @@ class GpxFileComponent extends React.Component {
     super(props);
     this.state = {
       isFileSelected : false,
-      gpx : null,
       boundingBox : null
     };
     this.parseXml = this.chooseXmlParser();
   }//constructor
 
-  loadGPXFileIntoGoogleMap = (map, file) => {
+  loadGPXUrlIntoGoogleMap = ( url) => {
+    fetch(url)
+      .then(response => response.text())
+      .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+      .then(xml => this.drawGpx(xml));
+  }
+
+  loadGPXFileIntoGoogleMap = (file) => {
     var data = file[0][0].target.result;
     var xml = this.parseXml(data);//$.parseXML(data);
+    this.drawGpx(xml);
+  }//loadGPXFileIntoGoogleMap
+
+  drawGpx = (xml) => {
     if (xml !== null) {
       //Setup parser
-      var parser = new GPXParser(xml, map);
+      var parser = new GPXParser(xml, this.props.map);
 
       //prepare for draw, change state
       var fileBoundingBox = parser.centerAndZoom(xml);
-      this.setState({gpx: parser, isFileSelected: true, boundingBox: fileBoundingBox});
+      this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
       var geodraw = toGeoJSON.gpx(xml);
       geodraw.features[0].properties.name = "track";
       geodraw.features[0].properties.color = "red";
@@ -41,7 +52,7 @@ class GpxFileComponent extends React.Component {
       console.log(track);
 
     }//if xml loaded
-  }//loadGPXFileIntoGoogleMap
+  }//drawGpx
   setFeatureColor = function (feature) {
     this.props.map.data.overrideStyle(feature, {strokeColor:feature.getProperty('color')});
   }
@@ -53,8 +64,13 @@ class GpxFileComponent extends React.Component {
       console.log(`Successfully loaded ${file.name}!`);
     });
     //Plot gpx path
-    var parser = this.loadGPXFileIntoGoogleMap(this.props.map, results);
+    this.loadGPXFileIntoGoogleMap(results);
   }//handleChange
+
+  useTestData = function(e) {
+    console.log('using test data from server');
+    this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:3000/NorCalShastaOption.gpx");
+  }
 
   componentDidMount() {
   }//componentDidMount
@@ -64,9 +80,13 @@ class GpxFileComponent extends React.Component {
     var selectFile;
     if (this.state.isFileSelected == true) {
         selectFile = null;
-	toDisplay = ( <AqiComponent boundingBox = {this.state.boundingBox}
+	toDisplay = ( <div><AqiComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
-			map = {this.props.map}/> );
+			map = {this.props.map}/> 
+		      <FirePerimeterComponent boundingBox = {this.state.boundingBox}
+			google = {this.props.google}
+			map = {this.props.map} /></div>
+			);
     }
     else {
       selectFile = (
@@ -75,6 +95,7 @@ class GpxFileComponent extends React.Component {
 	      onChange={this.handleChange.bind(this)}>
             <button type="button">Select a file!</button>
           </FileReaderInput>
+          <button type="button" onClick={this.useTestData.bind(this)}>Use demo data</button>
         </form>
        );
        toDisplay = selectFile;
