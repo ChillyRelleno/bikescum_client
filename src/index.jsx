@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
-import reactMaps from 'react-google-maps';
 import App from './app'
 
 ReactDOM.render(
