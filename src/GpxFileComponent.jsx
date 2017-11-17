@@ -33,15 +33,17 @@ class GpxFileComponent extends React.Component {
       geodraw.features[0].properties.color = "red";
 
       console.log(geodraw);
-      this.props.map.data.addListener('addfeature', this.setFeatureColor.bind(this));
+      //this.props.map.data.addListener('addfeature', this.setFeatureColor.bind(this));
       
       this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
-      console.log(this.props.map.data.getFeatureById("track"));
+      var track = this.props.map.data.getFeatureById("track");
+      this.setFeatureColor(track);
+      console.log(track);
 
     }//if xml loaded
   }//loadGPXFileIntoGoogleMap
-  setFeatureColor = function (event) {
-    this.props.map.data.overrideStyle(event.feature, {strokeColor:event.feature.getProperty('color')});
+  setFeatureColor = function (feature) {
+    this.props.map.data.overrideStyle(feature, {strokeColor:feature.getProperty('color')});
   }
   handleChange = function(e, results) {
     console.log('OnChange Fired, results = ');
@@ -62,7 +64,9 @@ class GpxFileComponent extends React.Component {
     var selectFile;
     if (this.state.isFileSelected == true) {
         selectFile = null;
-	toDisplay = ( <AqiComponent boundingBox = {this.state.boundingBox}/> );
+	toDisplay = ( <AqiComponent boundingBox = {this.state.boundingBox}
+			google = {this.props.google}
+			map = {this.props.map}/> );
     }
     else {
       selectFile = (
