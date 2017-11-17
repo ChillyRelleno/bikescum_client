@@ -10,18 +10,18 @@ class FirePerimeterComponent extends React.Component {
   static propTypes = {
     boundingBox: PropTypes.any,
     padding: PropTypes.number,
-    apiKey: PropTypes.string,
+    //apiKey: PropTypes.string,
     date: PropTypes.instanceOf(Date),
-    geo: PropTypes.any
+    url: PropTypes.string
   };
 
   static defaultProps = {
     boundingBox: null,
     padding: 0.5,
-    apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
+    //apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     //date: new Date(2017,9,18)
     date: new Date(),
-    geo: null
+    url: 'http://phillipdaw.com:3000/testFirePerimeters.kml'
   };
 
   constructor(props) {
@@ -32,26 +32,7 @@ class FirePerimeterComponent extends React.Component {
   }//constructor
 
   getPerimData() {
-
-
-    /*var southwest = this.props.boundingBox.getSouthWest();
-    var northeast = this.props.boundingBox.getNorthEast();
-
-    //Ad some padding
-    var west = southwest.lng() - this.props.padding;
-    var south = southwest.lat() - this.props.padding;
-    var east = northeast.lng() + this.props.padding;
-    var north = northeast.lat() + this.props.padding;
-    */
-
-   // var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + this.props.date.getFullYear() + 
-   //               "-" + (this.props.date.getMonth()+1) + "-" + this.props.date.getDate() + "T06&BBOX=" +
-   //               west + "," + south + "," + east + "," + north +
-   //               "&SRS=EPSG:4326&API_KEY=" + this.props.apiKey;
-
-//    console.log(aqiapi);
-
-    fetch('http://phillipdaw.com:3000/ActiveFirePerimeters.kml')
+    fetch(this.props.url)
         .then(response => response.text())
         .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
         .then(xml => this.usePerimData(xml));//.bind(this));

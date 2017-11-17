@@ -12,7 +12,7 @@ class AqiComponent extends React.Component {
     padding: PropTypes.number,
     apiKey: PropTypes.string,
     date: PropTypes.instanceOf(Date),
-    geo: PropTypes.any
+    url: PropTypes.string
   };
 
   static defaultProps = {
@@ -21,14 +21,13 @@ class AqiComponent extends React.Component {
     apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     //date: new Date(2017,9,18)
     date: new Date(),
-    geo: null
+    url: "http://phillipdaw.com:3000/testAqi.kml"
   };
 
   constructor(props) {
     super(props);
 
     this.getAqiData();
-    this.state = {geo : null};
   }//constructor
 
   getAqiData() {
@@ -48,7 +47,9 @@ class AqiComponent extends React.Component {
 
     console.log(aqiapi);
 
-    fetch('http://phillipdaw.com:3000/testAqi.kml')
+    //use test kml for development to avoid query limits
+    var testurl = 'http://phillipdaw.com:3000/testAqi.kml';
+    fetch(testurl)
         .then(response => response.text())
         .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
         .then(xml => this.useAqiData(xml));//.bind(this));
@@ -61,7 +62,6 @@ class AqiComponent extends React.Component {
     geoDraw.features[0].properties.color = "yellow";
     //geoDraw.features[0].properties.fill-opacity = 0.5;
     response.geojson = geoDraw;
-    this.setState({geo:geoDraw});
     this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
 
     var aqi = this.props.map.data.getFeatureById("aqi");
@@ -81,10 +81,7 @@ class AqiComponent extends React.Component {
 						});*/
   }
 
-
   render() {
-    if (this.state.geo !== null)
-	console.log(this.state.geo);
     return null;
   }//render
 
