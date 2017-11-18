@@ -31,25 +31,33 @@ class FirePerimeterComponent extends React.Component {
     this.state = {geo : null};
   }//constructor
 
+//this.props.url)
   getPerimData() {
-    fetch(this.props.url)
-        .then(response => response.text())
-        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(xml => this.usePerimData(xml));//.bind(this));
+    var southwest = this.props.boundingBox.getSouthWest()
+    var northeast = this.props.boundingBox.getNorthEast()
+    var url = "http://phillipdaw.com:3000/filter/fire/" + southwest.lng().toFixed(4) + "/" +
+          southwest.lat().toFixed(4) + "/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4)
+    fetch(url)//'http://phillipdaw.com:3000/testFirePerimeters.kml')//url)
+        .then(response => response.json())
+        //.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+        .then(geojson => this.usePerimData((geojson)));//.bind(this));
 	
   }//getAqiData
   
-  usePerimData(response) {
-    var geoDraw = toGeoJSON.kml(response);
-    geoDraw.features[0].properties.name = "fire";
-    geoDraw.features[0].properties.color = "red";
+  usePerimData(geoDraw) {
+    //var geoDraw = toGeoJSON.kml(response);
+    //geoDraw.features[0].properties.name = "fire";
+    //geoDraw.features[0].properties.color = "red";
     //geoDraw.features[0].properties.fill-opacity = 0.5;
     //response.geojson = geoDraw;
     //this.setState({geo:geoDraw});
-    this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
 
-    var fire = this.props.map.data.getFeatureById("fire");
-    this.setFeatureStyle(fire);
+    console.log(geoDraw);
+    var geojson = {type: "FeatureCollection", features: geoDraw}
+    this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
+
+    //var fire = this.props.map.data.getFeatureById("fire");
+    //this.setFeatureStyle(fire);
 
     return response;
   }//useAqiData
