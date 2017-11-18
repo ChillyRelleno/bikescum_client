@@ -59,7 +59,7 @@ class FirePerimeterComponent extends React.Component {
     //var fire = this.props.map.data.getFeatureById("fire");
     //this.setFeatureStyle(fire);
 
-    return response;
+    return geoDraw;
   }//useAqiData
 
   setFeatureStyle = function (feature) {
