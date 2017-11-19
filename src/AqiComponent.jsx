@@ -58,8 +58,8 @@ class AqiComponent extends React.Component {
   
   useAqiData(response) {
     var geoDraw = toGeoJSON.kml(response);
-    geoDraw.features[0].properties.name = "aqi";
-    geoDraw.features[0].properties.color = "yellow";
+    //geoDraw.features[0].properties.name = "aqi";
+    //geoDraw.features[0].properties.color = "yellow";
     //geoDraw.features[0].properties.fill-opacity = 0.5;
     response.geojson = geoDraw;
     this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});

@@ -19,6 +19,7 @@ class GpxFileComponent extends React.Component {
   }//constructor
 
   loadGPXUrlIntoGoogleMap = ( url) => {
+    this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
     fetch(url)
       .then(response => response.text())
       .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
@@ -41,20 +42,25 @@ class GpxFileComponent extends React.Component {
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
       var geodraw = toGeoJSON.gpx(xml);
       geodraw.features[0].properties.name = "track";
-      geodraw.features[0].properties.color = "red";
+      geodraw.features[0].properties.color = "purple";
+      
 
       console.log(geodraw);
-      //this.props.map.data.addListener('addfeature', this.setFeatureColor.bind(this));
+      //this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
       
       this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
       var track = this.props.map.data.getFeatureById("track");
-      this.setFeatureColor(track);
+      //this.setFeatureColor(track);
       console.log(track);
 
     }//if xml loaded
   }//drawGpx
-  setFeatureColor = function (feature) {
-    this.props.map.data.overrideStyle(feature, {strokeColor:feature.getProperty('color')});
+  setFeatureStyle = function (featureFeature) {
+    var feature = featureFeature.feature;
+    this.props.map.data.overrideStyle(feature, 
+		{strokeColor:feature.getProperty('color'),
+		fillColor: feature.getProperty('color'),
+		fillOpacity: feature.getProperty('opacity')})//0.9});
   }
   handleChange = function(e, results) {
     console.log('OnChange Fired, results = ');
@@ -89,8 +95,13 @@ class GpxFileComponent extends React.Component {
 			);
     }
     else {
+      var floatStyle = {
+        position: 'fixed', float: 'right'
+        //position: 'absolute', top: '10px', left: '10px', zIndex: 99
+      };
+
       selectFile = (
-        <form>
+        <form style={floatStyle}>
           <FileReaderInput as="text" id="gpx-file-input"
 	      onChange={this.handleChange.bind(this)}>
             <button type="button">Select a file!</button>

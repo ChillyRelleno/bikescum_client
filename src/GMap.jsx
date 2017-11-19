@@ -34,12 +34,14 @@ class GMap extends React.Component {
 
   render() {
     var floatStyle = {
-        position: 'absolute', top: '10px', left: '10px', zIndex: 99 
+        position: 'fixed', float: 'right'
+        //position: 'absolute', top: '10px', left: '10px', zIndex: 99 
 	};
     var mapStyle = { position: 'relative', height: '90%', width: '99%', padding: '0', margin: '0'};
-    //var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
+    var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
+    //style={mapContainerStyle}
     return (
-        <div id="mapContainer">
+        <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
 	      initialCenter={this.props.center} >
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
