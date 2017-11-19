@@ -48,26 +48,19 @@ class AqiComponent extends React.Component {
     console.log(aqiapi);
 
     //use test kml for development to avoid query limits
-    var testurl = 'http://phillipdaw.com:3000/testAqi.kml';
+    var testurl = "http://phillipdaw.com:3000/filter/aqi/" + west + "/" +
+			south + "/" + east + "/" + north
+    //PreFiltered by bounds data at'http://phillipdaw.com:3000/testAqi.kml';
     fetch(testurl)
-        .then(response => response.text())
-        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(xml => this.useAqiData(xml));//.bind(this));
-	
+        .then(response => response.json())
+        .then(geojson => this.useAqiData(geojson));//.bind(this));
   }//getAqiData
   
-  useAqiData(response) {
-    var geoDraw = toGeoJSON.kml(response);
-    //geoDraw.features[0].properties.name = "aqi";
-    //geoDraw.features[0].properties.color = "yellow";
-    //geoDraw.features[0].properties.fill-opacity = 0.5;
-    response.geojson = geoDraw;
-    this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
+  useAqiData(geoDraw) {
+    var geojson = {type: "FeatureCollection", features: geoDraw}
+    this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
 
-    var aqi = this.props.map.data.getFeatureById("aqi");
-    this.setFeatureStyle(aqi);
-
-    return response;
+    return geojson;
   }//useAqiData
 
   setFeatureStyle = function (feature) {
