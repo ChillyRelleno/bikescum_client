@@ -53,11 +53,14 @@ class AqiComponent extends React.Component {
     //PreFiltered by bounds data at'http://phillipdaw.com:3000/testAqi.kml';
     fetch(testurl)
         .then(response => response.json())
+	//.then(response => function() {console.log(response); return response})
         .then(geojson => this.useAqiData(geojson));//.bind(this));
   }//getAqiData
   
-  useAqiData(geoDraw) {
-    var geojson = {type: "FeatureCollection", features: geoDraw}
+  useAqiData(geojson) {
+    console.log("AQICOMPONENTJSX")
+    console.log(geojson)
+    //var geojson = {type: "FeatureCollection", features: geoDraw}
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
 
     return geojson;
