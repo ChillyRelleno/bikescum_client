@@ -36,11 +36,13 @@ class AqiComponent extends React.Component {
   }//constructor
 
   componentWillReceiveProps =(nextProps) => {
+     if (nextProps.boundingBox !== this.props.boundingBox) {
 	this.boundingBox = nextProps.boundingBox;
 	//console.log(this.boundingBox);
 	this.getAqiData();
 	//this.setState({boundingBox: this.props.boundingBox})
 	//  .then(function() {    	this.getAqiData(); });
+      }
   }//componentWillReceiveProps()
 
  geobufToGeojson = function(geobuf) {

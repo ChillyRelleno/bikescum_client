@@ -13,9 +13,17 @@ class GpxFileComponent extends React.Component {
     super(props);
     this.state = {
       isFileSelected : false,
-      boundingBox : null
+      boundingBox : null,
+      legend: new Array()
     };
     this.parseXml = this.chooseXmlParser();
+    this.legend = document.getElementById('legend');
+//this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(this.legend);
+    //console.log(props.map.controls)
+    //props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
+    //props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
+    //props.map.controls[props.google.maps.ControlPosition.RIGHT_TOP].push(this.legend);
+
   }//constructor
 
   loadGPXUrlIntoGoogleMap = ( url) => {
@@ -49,17 +57,23 @@ class GpxFileComponent extends React.Component {
       var fileBoundingBox = parser.centerAndZoom(xml);
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
       var geodraw = toGeoJSON.gpx(xml);
-      geodraw.features[0].properties.name = "track";
+      geodraw.features[0].properties.name = "Track";
       geodraw.features[0].properties.color = "purple";
-      
 
-      console.log(geodraw);
+      this.clearLegend();      
+//	if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].length >0)
+//	       this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT]
+//			.splice(this.legend);
+      this.addToLegend(geodraw.features[0].properties.name, 
+			geodraw.features[0].properties.color);	
+
+      //console.log(geodraw);
       //this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
       
       this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
-      var track = this.props.map.data.getFeatureById("track");
+      //var track = this.props.map.data.getFeatureById("Track");
       //this.setFeatureColor(track);
-      console.log(track);
+      //console.log(track);
 
     }//if xml loaded
   }//drawGpx
@@ -91,17 +105,49 @@ class GpxFileComponent extends React.Component {
   componentDidMount() {
   }//componentDidMount
 
+
+  clearLegend = () => {
+    //var legend = document.getElementById('legend');
+    this.legend.innerHTML = "";
+
+  }
+
+  addToLegend = (name, color) => {
+    //legend = document.getElementById('legend');
+    var toAdd = [name, color];
+
+    var div = document.createElement('div');
+    div.innerHTML = 
+         '<svg width="50" height="20" viewBox="0 0 50 20"><rect x="10" y="10" width="30" height="10" style="fill:'+color+'"/></svg>' 
+			+ name
+    this.legend.appendChild(div);
+
+    //this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP] = null;
+  if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT] !== null)
+    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
+
+    //var modLegend = this.state.legend.slice();
+	//modLegend.push(toAdd);
+   //this.setState(prevState => ({legend: [...prevState.legend, toAdd]}));
+//{legend: this.state.legend.concat([toAdd])});
+  }
+
   render() {
     var toDisplay;
     var selectFile;
+	console.log(this.state.legend);
+
     if (this.state.isFileSelected == true) {
         selectFile = null;
-	toDisplay = ( <div><AqiComponent boundingBox = {this.state.boundingBox}
+	toDisplay = ( <div>
+		      <AqiComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
-			map = {this.props.map}/> 
+			map = {this.props.map}
+			addToLegend={this.addToLegend}/> 
 		      <FirePerimeterComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
-			map = {this.props.map} />
+			map = {this.props.map} 
+			addToLegend={this.addToLegend}/>
  		      <form style={floatStyle}>
      		        <FileReaderInput as="text" id="gpx-file-input"
             		  onChange={this.handleFile.bind(this)}>

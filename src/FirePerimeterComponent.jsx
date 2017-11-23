@@ -15,7 +15,8 @@ class FirePerimeterComponent extends React.Component {
     padding: PropTypes.number,
     //apiKey: PropTypes.string,
     date: PropTypes.instanceOf(Date),
-    url: PropTypes.string
+    url: PropTypes.string,
+    addToLegend: PropTypes.any
   };
 
   static defaultProps = {
@@ -24,7 +25,8 @@ class FirePerimeterComponent extends React.Component {
     //apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     //date: new Date(2017,9,18)
     date: new Date(),
-    url: 'http://phillipdaw.com:" + config.serverPort + "/testFirePerimeters.kml'
+    url: 'http://phillipdaw.com:" + config.serverPort + "/testFirePerimeters.kml',
+    addToLegend: null
   };
 
   constructor(props) {
@@ -36,10 +38,12 @@ class FirePerimeterComponent extends React.Component {
   }//constructor
 
   componentWillReceiveProps =(nextProps) => {
+     if (nextProps.boundingBox !== this.props.boundingBox) {
         this.boundingBox = nextProps.boundingBox;
         this.getPerimData();
         //this.setState({boundingBox: this.props.boundingBox})
         //  .then(function() {          this.getAqiData(); });
+     }
   }//componentWillReceiveProps()
 
   geobufToGeojson = function(geobuf) { 
@@ -70,8 +74,9 @@ class FirePerimeterComponent extends React.Component {
   usePerimData(geoDraw) {
     //console.log(geoDraw);
     //var geojson = {type: "FeatureCollection", features: geoDraw}
+    this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
     this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
-
+    
     return geoDraw;
   }//useAqiData
 

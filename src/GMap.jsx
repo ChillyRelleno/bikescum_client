@@ -31,6 +31,7 @@ class GMap extends React.Component {
   componentDidMount() {  }
   componentDidUpdate() { }
  
+//          <div id="legend" style={legendStyle}> </div>
 
   render() {
     var floatStyle = {
@@ -39,6 +40,13 @@ class GMap extends React.Component {
 	};
     var mapStyle = { position: 'relative', height: '90%', width: '99%', padding: '0', margin: '0'};
     var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
+
+    var legendStyle = { fontFamily: 'Arial, sans-serif',
+			background: '#fff',
+			padding: '10px',
+			margin: '10px',
+			border: '3px solid #000'
+		      };
     //style={mapContainerStyle}
     return (
         <div id="mapContainer" >
@@ -46,6 +54,7 @@ class GMap extends React.Component {
 	      initialCenter={this.props.center} >
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
+          <div id="legend" style={legendStyle}> </div>
         </div>  
 
     );
