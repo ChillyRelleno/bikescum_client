@@ -5,7 +5,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
-import styles from './styles.css'
+import styles from './GMap.css'
 
 class GMap extends React.Component {
   static propTypes = {
