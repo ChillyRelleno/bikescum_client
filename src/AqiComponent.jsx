@@ -6,6 +6,7 @@ import toGeoJSON from './lib/togeojson.js';
 //import GMap from './GMap.jsx';
 import Geobuf from 'geobuf';
 import Pbf from 'pbf';
+import config from './config.js'
 
 class AqiComponent extends React.Component {
 
@@ -23,7 +24,7 @@ class AqiComponent extends React.Component {
     apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     //date: new Date(2017,9,18)
     date: new Date(),
-    url: "http://phillipdaw.com:3000/testAqi.kml"
+    url: "http://phillipdaw.com:" + config.serverPort + "/testAqi.kml"
   };
 
   constructor(props) {
@@ -36,7 +37,7 @@ class AqiComponent extends React.Component {
 
   componentWillReceiveProps =(nextProps) => {
 	this.boundingBox = nextProps.boundingBox;
-	console.log(this.boundingBox);
+	//console.log(this.boundingBox);
 	this.getAqiData();
 	//this.setState({boundingBox: this.props.boundingBox})
 	//  .then(function() {    	this.getAqiData(); });
@@ -63,9 +64,10 @@ class AqiComponent extends React.Component {
     console.log(aqiapi);
 
     //use test kml for development to avoid query limits
-    var testurl = "http://phillipdaw.com:3000/filter/aqi/" + west + "/" +
+    var testurl = "http://phillipdaw.com:" + config.serverPort + 
+			"/filter/aqi/" + west + "/" +
 			south + "/" + east + "/" + north
-    //PreFiltered by bounds data at'http://phillipdaw.com:3000/testAqi.kml';
+    //PreFiltered by bounds data at'http://phillipdaw.com:' + config.serverPort + '/testAqi.kml';
     fetch(testurl)
         .then(response => response.arrayBuffer())
         //.then(response => response.json())
@@ -75,8 +77,8 @@ class AqiComponent extends React.Component {
   }//getAqiData
   
   useAqiData(geojson) {
-    console.log("AQICOMPONENTJSX")
-    console.log(geojson)
+    //console.log("AQICOMPONENTJSX")
+    //console.log(geojson)
     //var geojson = {type: "FeatureCollection", features: geoDraw}
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
 

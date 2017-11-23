@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import toGeoJSON from './lib/togeojson.js';
+import Geobuf from 'geobuf';
+import Pbf from 'pbf';
 //import FileReaderInput from 'react-file-reader-input';
 //import GPXParser from './loadgpx.js';
 //import GMap from './GMap.jsx';
+import config from './config.js';
 
 class FirePerimeterComponent extends React.Component {
 
@@ -21,7 +24,7 @@ class FirePerimeterComponent extends React.Component {
     //apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     //date: new Date(2017,9,18)
     date: new Date(),
-    url: 'http://phillipdaw.com:3000/testFirePerimeters.kml'
+    url: 'http://phillipdaw.com:" + config.serverPort + "/testFirePerimeters.kml'
   };
 
   constructor(props) {
@@ -39,6 +42,9 @@ class FirePerimeterComponent extends React.Component {
         //  .then(function() {          this.getAqiData(); });
   }//componentWillReceiveProps()
 
+  geobufToGeojson = function(geobuf) { 
+    return Geobuf.decode( new Pbf(geobuf) );
+  }
 
   getPerimData() {
     var southwest = this.boundingBox.getSouthWest()
@@ -50,19 +56,21 @@ class FirePerimeterComponent extends React.Component {
     var north = northeast.lat() + this.props.padding;
 
 
-    var url = "http://phillipdaw.com:3000/filter/fire/" + southwest.lng().toFixed(4) + "/" +
+    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/fire/" + southwest.lng().toFixed(4) + "/" +
           southwest.lat().toFixed(4) + "/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4)
-    fetch(url)//'http://phillipdaw.com:3000/testFirePerimeters.kml')//url)
-	.then(response => response.json())
+    fetch(url)//'http://phillipdaw.com:' + config.serverPort + '/testFirePerimeters.kml')//url)
+	//.then(response => response.json())
+	.then(response => response.arrayBuffer())
+	.then(arrbuf => this.geobufToGeojson(arrbuf) )
         //.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
         .then(geojson => this.usePerimData((geojson)));//.bind(this));
 	
   }//getAqiData
   
   usePerimData(geoDraw) {
-    console.log(geoDraw);
-    var geojson = {type: "FeatureCollection", features: geoDraw}
-    this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
+    //console.log(geoDraw);
+    //var geojson = {type: "FeatureCollection", features: geoDraw}
+    this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
 
     return geoDraw;
   }//useAqiData

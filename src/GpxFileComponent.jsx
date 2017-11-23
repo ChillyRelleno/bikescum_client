@@ -5,7 +5,7 @@ import GMap from './GMap.jsx';
 import AqiComponent from './AqiComponent.jsx';
 import FirePerimeterComponent from './FirePerimeterComponent.jsx';
 import toGeoJSON from './lib/togeojson.js';
-
+import config from './config.js';
 
 class GpxFileComponent extends React.Component {
 
@@ -65,10 +65,11 @@ class GpxFileComponent extends React.Component {
   }//drawGpx
   setFeatureStyle = function (featureFeature) {
     var feature = featureFeature.feature;
-    this.props.map.data.overrideStyle(feature, 
-		{strokeColor:feature.getProperty('color'),
-		fillColor: feature.getProperty('color'),
-		fillOpacity: feature.getProperty('opacity')})//0.9});
+    var style ={strokeColor:feature.getProperty('color'),
+                fillColor: feature.getProperty('color'),
+                fillOpacity: feature.getProperty('opacity')};
+    this.props.map.data.overrideStyle(feature, style
+     );
   }
   handleFile = function(e, results) {
     console.log('OnChange Fired, results = ');
@@ -83,7 +84,8 @@ class GpxFileComponent extends React.Component {
 
   useTestData = function(e) {
     console.log('using test data from server');
-    this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:3000/NorCalShastaOption.gpx");
+    this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:" + config.serverPort + 
+	"/NorCalShastaOption.gpx");
   }
 
   componentDidMount() {
