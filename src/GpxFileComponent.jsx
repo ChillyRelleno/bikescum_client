@@ -17,7 +17,7 @@ class GpxFileComponent extends React.Component {
       legend: new Array()
     };
     this.parseXml = this.chooseXmlParser();
-    this.legend = document.getElementById('legend');
+    //this.legend = document.getElementById('legend');
 //this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(this.legend);
     //console.log(props.map.controls)
     //props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
@@ -60,6 +60,7 @@ class GpxFileComponent extends React.Component {
       geodraw.features[0].properties.name = "Track";
       geodraw.features[0].properties.color = "purple";
 
+      this.legend = document.getElementById('legend');
       this.clearLegend();      
 //	if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].length >0)
 //	       this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT]
