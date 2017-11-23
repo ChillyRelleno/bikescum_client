@@ -27,19 +27,29 @@ class AqiComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    //this.state = {boundingBox: this.props.boundingBox};
+    this.boundingBox = this.props.boundingBox;
     this.getAqiData();
   }//constructor
 
+  componentWillReceiveProps =(nextProps) => {
+	this.boundingBox = nextProps.boundingBox;
+	console.log(this.boundingBox);
+	this.getAqiData();
+	//this.setState({boundingBox: this.props.boundingBox})
+	//  .then(function() {    	this.getAqiData(); });
+  }//componentWillReceiveProps()
+
+
   getAqiData() {
-    var southwest = this.props.boundingBox.getSouthWest();
-    var northeast = this.props.boundingBox.getNorthEast();
+    var southwest = this.boundingBox.getSouthWest();
+    var northeast = this.boundingBox.getNorthEast();
 
     //Ad some padding
     var west = southwest.lng() - this.props.padding;
     var south = southwest.lat() - this.props.padding;
     var east = northeast.lng() + this.props.padding;
     var north = northeast.lat() + this.props.padding;
-
     var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + this.props.date.getFullYear() + 
                   "-" + (this.props.date.getMonth()+1) + "-" + this.props.date.getDate() + "T06&BBOX=" +
                   west + "," + south + "," + east + "," + north +
@@ -78,6 +88,7 @@ class AqiComponent extends React.Component {
   }
 
   render() {
+
     return null;
   }//render
 
@@ -87,7 +98,7 @@ class AqiComponent extends React.Component {
   //componentDidMount() {}
   //componentWillReceiveProps() {}
   //shouldComponentUpdate() {}
-  //componentWillUpdate() {}
+  //componentWillUpdate =() => {}
   //componentDidUpdate() {}
   //componentWillUnmount() {}
   //componentDidCatch() {}

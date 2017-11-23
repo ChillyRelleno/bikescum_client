@@ -27,13 +27,29 @@ class FirePerimeterComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    this.boundingBox = this.props.boundingBox;
     this.getPerimData();
     this.state = {geo : null};
   }//constructor
 
+  componentWillReceiveProps =(nextProps) => {
+        this.boundingBox = nextProps.boundingBox;
+        this.getPerimData();
+        //this.setState({boundingBox: this.props.boundingBox})
+        //  .then(function() {          this.getAqiData(); });
+  }//componentWillReceiveProps()
+
+
   getPerimData() {
-    var southwest = this.props.boundingBox.getSouthWest()
-    var northeast = this.props.boundingBox.getNorthEast()
+    var southwest = this.boundingBox.getSouthWest()
+    var northeast = this.boundingBox.getNorthEast()
+    //Ad some padding
+    var west = southwest.lng() - this.props.padding;
+    var south = southwest.lat() - this.props.padding;
+    var east = northeast.lng() + this.props.padding;
+    var north = northeast.lat() + this.props.padding;
+
+
     var url = "http://phillipdaw.com:3000/filter/fire/" + southwest.lng().toFixed(4) + "/" +
           southwest.lat().toFixed(4) + "/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4)
     fetch(url)//'http://phillipdaw.com:3000/testFirePerimeters.kml')//url)

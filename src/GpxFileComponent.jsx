@@ -31,8 +31,14 @@ class GpxFileComponent extends React.Component {
     this.drawGpx(xml);
   }//loadGPXFileIntoGoogleMap
 
+
   drawGpx = (xml) => {
     if (xml !== null) {
+      //Clear map
+      this.props.map.data.forEach((feature) => {    //function(feature) {
+	this.props.map.data.remove(feature);
+      });
+
       //Setup parser
       var parser = new GPXParser(xml, this.props.map);
 
