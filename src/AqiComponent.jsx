@@ -4,6 +4,8 @@ import toGeoJSON from './lib/togeojson.js';
 //import FileReaderInput from 'react-file-reader-input';
 //import GPXParser from './loadgpx.js';
 //import GMap from './GMap.jsx';
+import Geobuf from 'geobuf';
+import Pbf from 'pbf';
 
 class AqiComponent extends React.Component {
 
@@ -40,6 +42,9 @@ class AqiComponent extends React.Component {
 	//  .then(function() {    	this.getAqiData(); });
   }//componentWillReceiveProps()
 
+ geobufToGeojson = function(geobuf) {
+   return Geobuf.decode( new Pbf(geobuf) );
+ }
 
   getAqiData() {
     var southwest = this.boundingBox.getSouthWest();
@@ -62,7 +67,9 @@ class AqiComponent extends React.Component {
 			south + "/" + east + "/" + north
     //PreFiltered by bounds data at'http://phillipdaw.com:3000/testAqi.kml';
     fetch(testurl)
-        .then(response => response.json())
+        .then(response => response.arrayBuffer())
+        //.then(response => response.json())
+	.then(arrbuf => this.geobufToGeojson(arrbuf) )
 	//.then(response => function() {console.log(response); return response})
         .then(geojson => this.useAqiData(geojson));//.bind(this));
   }//getAqiData
