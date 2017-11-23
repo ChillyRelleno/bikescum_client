@@ -108,8 +108,9 @@ class GpxFileComponent extends React.Component {
 
   clearLegend = () => {
     //var legend = document.getElementById('legend');
-    this.legend.innerHTML = "";
-
+    this.legend.innerHTML = "<h3>Legend</h3>";
+    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].clear()
+    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
   }
 
   addToLegend = (name, color) => {
@@ -123,8 +124,10 @@ class GpxFileComponent extends React.Component {
     this.legend.appendChild(div);
 
     //this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP] = null;
-  if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT] !== null)
-    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
+  //if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].len == 0)
+  var controls = this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
+  controls.push(div)
+    //this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
 
     //var modLegend = this.state.legend.slice();
 	//modLegend.push(toAdd);

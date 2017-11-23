@@ -5,6 +5,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
+import styles from './styles.css'
 
 class GMap extends React.Component {
   static propTypes = {
@@ -41,12 +42,12 @@ class GMap extends React.Component {
     var mapStyle = { position: 'relative', height: '90%', width: '99%', padding: '0', margin: '0'};
     var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
 
-    var legendStyle = { fontFamily: 'Arial, sans-serif',
-			background: '#fff',
-			padding: '10px',
-			margin: '10px',
-			border: '3px solid #000'
-		      };
+//    var legendStyle = { fontFamily: 'Arial, sans-serif',
+//			background: '#fff',
+//			padding: '10px',
+//			margin: '10px',
+//			border: '3px solid #000'
+//		      };
     //style={mapContainerStyle}
     return (
         <div id="mapContainer" >
@@ -54,7 +55,7 @@ class GMap extends React.Component {
 	      initialCenter={this.props.center} >
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
-          <div id="legend" style={legendStyle}> </div>
+          <div id="legend"> </div>
         </div>  
 
     );
