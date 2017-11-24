@@ -60,20 +60,18 @@ class FirePerimeterComponent extends React.Component {
     var north = northeast.lat() + this.props.padding;
 
 
-    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/fire/" + southwest.lng().toFixed(4) + "/" +
-          southwest.lat().toFixed(4) + "/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4)
-    fetch(url)//'http://phillipdaw.com:' + config.serverPort + '/testFirePerimeters.kml')//url)
-	//.then(response => response.json())
+    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/fire/" + 
+		southwest.lng().toFixed(4) + "/" + southwest.lat().toFixed(4) + 
+		"/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4);
+    fetch(url)
 	.then(response => response.arrayBuffer())
 	.then(arrbuf => this.geobufToGeojson(arrbuf) )
-        //.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(geojson => this.usePerimData((geojson)));//.bind(this));
+        .then(geojson => this.usePerimData((geojson)));
 	
   }//getAqiData
   
   usePerimData(geoDraw) {
     //console.log(geoDraw);
-    //var geojson = {type: "FeatureCollection", features: geoDraw}
     this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
     this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
     

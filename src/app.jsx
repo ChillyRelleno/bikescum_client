@@ -22,7 +22,7 @@ export default class App extends React.Component {
         async ></script>
 
         <GMap 
-           style={{height:"400px", width:"400px"}} 
+           style={{height:"400px", width:"400px", margin:"0", padding:"0"}} 
 
            center={{  lat: 45.5231,  lng: -122.9765 }}
         />

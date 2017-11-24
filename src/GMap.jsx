@@ -44,16 +44,11 @@ class GMap extends React.Component {
         position: 'fixed', float: 'right'
         //position: 'absolute', top: '10px', left: '10px', zIndex: 99 
 	};
-    var mapStyle = { position: 'relative', height: '90%', width: '99%', padding: '0', margin: '0'};
-    var mapContainerStyle = { position: 'relative', height: '95%', width: '95%'};
+    var mapStyle = { position: 'relative', height: '100%' , width: '100%', 
+			padding: '0', margin: '0'};
+    var mapContainerStyle = { position: 'relative', height: '100%', width: '100%',
+			padding: '0', margin: '0'};
 
-//    var legendStyle = { fontFamily: 'Arial, sans-serif',
-//			background: '#fff',
-//			padding: '10px',
-//			margin: '10px',
-//			border: '3px solid #000'
-//		      };
-    //style={mapContainerStyle}
     return (
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}

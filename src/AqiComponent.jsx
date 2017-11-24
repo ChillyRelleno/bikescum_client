@@ -22,14 +22,12 @@ class AqiComponent extends React.Component {
     boundingBox: null,
     padding: 0.5,
     apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
-    //date: new Date(2017,9,18)
     date: new Date(),
     url: "http://phillipdaw.com:" + config.serverPort + "/testAqi.kml"
   };
 
   constructor(props) {
     super(props);
-
     //this.state = {boundingBox: this.props.boundingBox};
     this.boundingBox = this.props.boundingBox;
     this.getAqiData();
@@ -38,11 +36,8 @@ class AqiComponent extends React.Component {
   componentWillReceiveProps =(nextProps) => {
      if (nextProps.boundingBox !== this.props.boundingBox) {
 	this.boundingBox = nextProps.boundingBox;
-	//console.log(this.boundingBox);
 	this.getAqiData();
-	//this.setState({boundingBox: this.props.boundingBox})
-	//  .then(function() {    	this.getAqiData(); });
-      }
+      }//if
   }//componentWillReceiveProps()
 
  geobufToGeojson = function(geobuf) {
@@ -58,9 +53,11 @@ class AqiComponent extends React.Component {
     var south = southwest.lat() - this.props.padding;
     var east = northeast.lng() + this.props.padding;
     var north = northeast.lat() + this.props.padding;
-    var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + this.props.date.getFullYear() + 
-                  "-" + (this.props.date.getMonth()+1) + "-" + this.props.date.getDate() + "T06&BBOX=" +
-                  west + "," + south + "," + east + "," + north +
+    var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + 
+			this.props.date.getFullYear() + "-" + 
+			(this.props.date.getMonth()+1) + "-" + 
+			this.props.date.getDate() + "T06&BBOX=" +
+			west + "," + south + "," + east + "," + north +
                   "&SRS=EPSG:4326&API_KEY=" + this.props.apiKey;
 
     console.log(aqiapi);
@@ -72,34 +69,16 @@ class AqiComponent extends React.Component {
     //PreFiltered by bounds data at'http://phillipdaw.com:' + config.serverPort + '/testAqi.kml';
     fetch(testurl)
         .then(response => response.arrayBuffer())
-        //.then(response => response.json())
 	.then(arrbuf => this.geobufToGeojson(arrbuf) )
-	//.then(response => function() {console.log(response); return response})
-        .then(geojson => this.useAqiData(geojson));//.bind(this));
+        .then(geojson => this.useAqiData(geojson));
   }//getAqiData
   
   useAqiData(geojson) {
-    //console.log("AQICOMPONENTJSX")
-    //console.log(geojson)
-    //var geojson = {type: "FeatureCollection", features: geoDraw}
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
-
     return geojson;
   }//useAqiData
 
-  setFeatureStyle = function (feature) {
-	//todo use feature styles from kml properties to highlight multiple intensities. Sample dataset has
-	// only one intensity so I couldn't really test
-    this.props.map.data.overrideStyle(feature, {strokeColor:"yellow", fillColor: "yellow", fillOpacity: 0.5});//feature.getProperty('color')});
-    /*this.props.map.data.overrideStyle(feature, { strokeColor : "yellow",//feature.getProperty('color'), 
-						fill: "yellow", //feature.getProperty('fill'),
-						fillOpacity: 0.5,//feature.getProperty('fill-opacity'),
-						strokeOpacity: feature.getProperty('stroke-opacity')
-						});*/
-  }
-
   render() {
-
     return null;
   }//render
 

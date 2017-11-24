@@ -8,7 +8,7 @@ import toGeoJSON from './lib/togeojson.js';
 import config from './config.js';
 
 class GpxFileComponent extends React.Component {
-
+  boundaryLine = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -17,13 +17,6 @@ class GpxFileComponent extends React.Component {
       legend: new Array()
     };
     this.parseXml = this.chooseXmlParser();
-    //this.legend = document.getElementById('legend');
-//this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(this.legend);
-    //console.log(props.map.controls)
-    //props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
-    //props.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
-    //props.map.controls[props.google.maps.ControlPosition.RIGHT_TOP].push(this.legend);
-
   }//constructor
 
   loadGPXUrlIntoGoogleMap = ( url) => {
@@ -46,6 +39,13 @@ class GpxFileComponent extends React.Component {
       this.props.map.data.forEach((feature) => {    //function(feature) {
 	this.props.map.data.remove(feature);
       });
+      if (this.boundaryLine) {
+	//this.boundaryLine.setVisible(false);
+	this.boundaryLine.setPath([]);//remove();
+	this.boundaryLine.setMap(null);
+	//this.boundaryLine.icons.pop();
+	//this.boundaryLine.latLngs.clear();
+      }
 
       //Setup parser
       var parser = new GPXParser(xml, this.props.map);
@@ -55,22 +55,20 @@ class GpxFileComponent extends React.Component {
 
       //prepare for draw, change state
       var fileBoundingBox = parser.centerAndZoom(xml);
+      this.drawBoundary(fileBoundingBox);
+
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
       var geodraw = toGeoJSON.gpx(xml);
       geodraw.features[0].properties.name = "Track";
       geodraw.features[0].properties.color = "purple";
 
+      this.drawBoundary(fileBoundingBox);
+
       this.legend = document.getElementById('legend');
       this.clearLegend();      
-//	if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].length >0)
-//	       this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT]
-//			.splice(this.legend);
       this.addToLegend(geodraw.features[0].properties.name, 
 			geodraw.features[0].properties.color);	
 
-      //console.log(geodraw);
-      //this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
-      
       this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
 
       var fileDialog = document.getElementById('fileSelectDialog')
@@ -79,6 +77,32 @@ class GpxFileComponent extends React.Component {
 
     }//if xml loaded
   }//drawGpx
+
+  drawBoundary = (boundingBox) => {
+    var northeast = boundingBox.getNorthEast();
+    var southwest = boundingBox.getSouthWest();
+
+    var pad = 0.5;
+    var pathCoordinates = [ {lat: northeast.lat()+pad, lng: northeast.lng()+pad}, 
+		{lat: southwest.lat()-pad, lng: northeast.lng()+pad},
+                {lat: southwest.lat()-pad, lng: southwest.lng()-pad}, 
+		{lat: northeast.lat()+pad, lng: southwest.lng()-pad},
+                {lat: northeast.lat()+pad, lng: northeast.lng()+pad} ];
+    var lineSymbol = {
+	path: 'M 0,-1 0,1',
+        strokeOpacity: 1,
+	strokeColor: "green",
+        scale: 4,
+	strokeWeight: 1
+      };
+      this.boundaryLine = new this.props.google.maps.Polyline( {
+	  path: pathCoordinates,
+	  strokeOpacity: 0,
+	  icons: [{ icon: lineSymbol, offset: '0', repeat: '20px' }],
+	  map: this.props.map
+      });
+  }//drawBoundary
+
   setFeatureStyle = function (featureFeature) {
     var feature = featureFeature.feature;
     var style ={strokeColor:feature.getProperty('color'),
@@ -88,8 +112,6 @@ class GpxFileComponent extends React.Component {
      );
   }
   handleFile = function(e, results) {
-    console.log('OnChange Fired, results = ');
-    console.log(results);
     results.forEach(result => {
       const [e, file] = result;
       console.log(`Successfully loaded ${file.name}!`);
@@ -109,44 +131,36 @@ class GpxFileComponent extends React.Component {
 
 
   clearLegend = () => {
-    //var legend = document.getElementById('legend');
     this.legend.innerHTML = "<h3>Legend</h3>";
     this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].clear()
     this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
   }
 
   addToLegend = (name, color) => {
-    //legend = document.getElementById('legend');
     var toAdd = [name, color];
-
     var div = document.createElement('div');
     div.innerHTML = 
-         '<svg width="50" height="20" viewBox="0 0 50 20"><rect x="10" y="10" width="30" height="10" style="fill:'+color+'"/></svg>' 
+        '<svg width="50" height="20" viewBox="0 0 50 20">' + 
+	'<rect x="10" y="10" width="30" height="10" style="fill:'+color+'"/></svg>' 
 			+ name
     this.legend.appendChild(div);
 
-    //this.props.map.controls[google.maps.ControlPosition.RIGHT_TOP] = null;
-  //if (this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].len == 0)
-  var controls = this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
-  controls.push(div)
-    //this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
-
-    //var modLegend = this.state.legend.slice();
-	//modLegend.push(toAdd);
-   //this.setState(prevState => ({legend: [...prevState.legend, toAdd]}));
-//{legend: this.state.legend.concat([toAdd])});
+    var controls = 
+	this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
+    controls.push(div)
   }
 
   render() {
     var toDisplay;
     var selectFile;
-    var floatStyle = {        position: 'fixed', float: 'right'      };
+    var floatStyle = { position: 'fixed', float: 'right' };
     var fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
                         <FileReaderInput as="text" id="gpx-file-input"
                           onChange={this.handleFile.bind(this)}>
                           <button type="button">Select a file!</button>
                         </FileReaderInput>
-                        <button type="button" onClick={this.useTestData.bind(this)}>Use demo data</button>
+                        <button type="button" onClick={this.useTestData.bind(this)}>
+				Use demo data</button>
                       </form>
 	);
 
