@@ -72,9 +72,10 @@ class GpxFileComponent extends React.Component {
       //this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
       
       this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
-      //var track = this.props.map.data.getFeatureById("Track");
-      //this.setFeatureColor(track);
-      //console.log(track);
+
+      var fileDialog = document.getElementById('fileSelectDialog')
+      this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].clear();
+      this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(fileDialog)
 
     }//if xml loaded
   }//drawGpx
@@ -139,7 +140,16 @@ class GpxFileComponent extends React.Component {
   render() {
     var toDisplay;
     var selectFile;
-	console.log(this.state.legend);
+    var floatStyle = {        position: 'fixed', float: 'right'      };
+    var fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
+                        <FileReaderInput as="text" id="gpx-file-input"
+                          onChange={this.handleFile.bind(this)}>
+                          <button type="button">Select a file!</button>
+                        </FileReaderInput>
+                        <button type="button" onClick={this.useTestData.bind(this)}>Use demo data</button>
+                      </form>
+	);
+
 
     if (this.state.isFileSelected == true) {
         selectFile = null;
@@ -152,31 +162,12 @@ class GpxFileComponent extends React.Component {
 			google = {this.props.google}
 			map = {this.props.map} 
 			addToLegend={this.addToLegend}/>
- 		      <form style={floatStyle}>
-     		        <FileReaderInput as="text" id="gpx-file-input"
-            		  onChange={this.handleFile.bind(this)}>
-            		  <button type="button">Select a file!</button>
-          		</FileReaderInput>
-          	        <button type="button" onClick={this.useTestData.bind(this)}>Use demo data</button>
-                      </form>
-</div>
+		      {fileDialog}
+		</div>
 			);
     }
     else {
-      var floatStyle = {        position: 'fixed', float: 'right'
-        //position: 'absolute', top: '10px', left: '10px', zIndex: 99
-      };
-
-      selectFile = (
-        <form style={floatStyle}>
-          <FileReaderInput as="text" id="gpx-file-input"
-	      onChange={this.handleFile.bind(this)}>
-            <button type="button">Select a file!</button>
-          </FileReaderInput>
-          <button type="button" onClick={this.useTestData.bind(this)}>Use demo data</button>
-        </form>
-       );
-       toDisplay = selectFile;
+       toDisplay = fileDialog;
     }//else
       return toDisplay;
   }//render

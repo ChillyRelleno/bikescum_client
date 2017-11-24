@@ -28,6 +28,11 @@ class GMap extends React.Component {
     this.center = props.center;    
   }//constructor
 
+  addFileDialogToControls = (props, map) => {
+    var div = document.getElementById('fileSelectDialog')
+    map.controls[this.props.google.maps.ControlPosition.BOTTOM_CENTER].push(div)
+  }
+
 
   componentDidMount() {  }
   componentDidUpdate() { }
@@ -52,10 +57,10 @@ class GMap extends React.Component {
     return (
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
-	      initialCenter={this.props.center} >
+	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
-          <div id="legend"> </div>
+          <div id="legend" className="mapControls"> </div>
         </div>  
 
     );
