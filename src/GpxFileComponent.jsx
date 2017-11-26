@@ -32,20 +32,22 @@ class GpxFileComponent extends React.Component {
     this.drawGpx(xml);
   }//loadGPXFileIntoGoogleMap
 
+  clearMap = () => {
+    //Clear map
+    this.props.map.data.forEach((feature) => {    //function(feature) {
+      this.props.map.data.remove(feature);
+    });
+    //Doesn't work for some reason?
+    //this.clearBoundary();
+  }
 
   drawGpx = (xml) => {
     if (xml !== null) {
       //Clear map
-      this.props.map.data.forEach((feature) => {    //function(feature) {
-	this.props.map.data.remove(feature);
-      });
-      if (this.boundaryLine) {
-	//this.boundaryLine.setVisible(false);
-	this.boundaryLine.setPath([]);//remove();
-	this.boundaryLine.setMap(null);
-	//this.boundaryLine.icons.pop();
-	//this.boundaryLine.latLngs.clear();
-      }
+      this.clearMap();
+      //this.props.map.data.forEach((feature) => {    //function(feature) {
+	//this.props.map.data.remove(feature);
+      //});
 
       //Setup parser
       var parser = new GPXParser(xml, this.props.map);
@@ -78,7 +80,16 @@ class GpxFileComponent extends React.Component {
     }//if xml loaded
   }//drawGpx
 
+  clearBoundary = () => {
+    //Cut previous boundary line
+    if (this.boundaryLine)
+      this.boundaryLine.setMap(null);
+  }
+
   drawBoundary = (boundingBox) => {
+    //Now called in clearMap()---Cut previous boundary line
+    this.clearBoundary();
+
     var northeast = boundingBox.getNorthEast();
     var southwest = boundingBox.getSouthWest();
 
