@@ -107,9 +107,6 @@ class GpxFileComponent extends React.Component {
     //Now called in clearMap()---Cut previous boundary line
     this.clearBoundary();
 
-    //var northeast = boundingBox.getNorthEast();
-    //var southwest = boundingBox.getSouthWest();
-
     var west = boundingBox[0], south = boundingBox[1], east = boundingBox[2],
 	north = boundingBox[3];
     var pad = 0.5;
@@ -117,13 +114,8 @@ class GpxFileComponent extends React.Component {
                 {lat: south-pad, lng: east+pad},
                 {lat: south-pad, lng: west-pad},
                 {lat: north+pad, lng: west-pad},
-                {lat: north+pad, lng: east.lng+pad} ];
+                {lat: north+pad, lng: east+pad} ];
 
-    /*var pathCoordinates = [ {lat: northeast.lat()+pad, lng: northeast.lng()+pad}, 
-		{lat: southwest.lat()-pad, lng: northeast.lng()+pad},
-                {lat: southwest.lat()-pad, lng: southwest.lng()-pad}, 
-		{lat: northeast.lat()+pad, lng: southwest.lng()-pad},
-                {lat: northeast.lat()+pad, lng: northeast.lng()+pad} ]; */
     var lineSymbol = {
 	path: 'M 0,-1 0,1',
         strokeOpacity: 1,
