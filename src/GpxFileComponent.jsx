@@ -6,6 +6,10 @@ import AqiComponent from './AqiComponent.jsx';
 import FirePerimeterComponent from './FirePerimeterComponent.jsx';
 import toGeoJSON from './lib/togeojson.js';
 import config from './config.js';
+import Geobuf from 'geobuf';
+import Pbf from 'pbf';
+import GeoBounds from 'geojson-bounds'
+
 
 class GpxFileComponent extends React.Component {
   boundaryLine = null;
@@ -26,10 +30,26 @@ class GpxFileComponent extends React.Component {
       .then(xml => this.drawGpx(xml));
   }
 
+  geobufToGeojson = function(geobuf) {
+    return Geobuf.decode( new Pbf(geobuf) );
+  }
+
+  loadGeobufTrackIntoGoogleMap = (url) => {
+    fetch(url)
+        .then(response => response.arrayBuffer())
+        .then(arrbuf => this.geobufToGeojson(arrbuf) )
+        .then(geojson => this.drawGpx(geojson));
+
+    //var json = geobufToGeojson(geobuf);
+    //this.drawGpx(json);
+  }//loadGeobufTrack
+
+
   loadGPXFileIntoGoogleMap = (file) => {
     var data = file[0][0].target.result;
     var xml = this.parseXml(data);//$.parseXML(data);
-    this.drawGpx(xml);
+    var json = toGeoJSON.gpx(xml);
+    this.drawGpx(json);
   }//loadGPXFileIntoGoogleMap
 
   clearMap = () => {
@@ -41,37 +61,34 @@ class GpxFileComponent extends React.Component {
     //this.clearBoundary();
   }
 
-  drawGpx = (xml) => {
-    if (xml !== null) {
+  drawGpx = (json) => { //xml) => {
+    if (json !== null) {
       //Clear map
       this.clearMap();
-      //this.props.map.data.forEach((feature) => {    //function(feature) {
-	//this.props.map.data.remove(feature);
-      //});
 
       //Setup parser
-      var parser = new GPXParser(xml, this.props.map);
+      //var parser = new GPXParser(xml, this.props.map);
+      var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 
       //Set up event so features can color themselves
       this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
+	console.log(fileBoundingBox)
       //prepare for draw, change state
-      var fileBoundingBox = parser.centerAndZoom(xml);
       this.drawBoundary(fileBoundingBox);
 
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
-      var geodraw = toGeoJSON.gpx(xml);
-      geodraw.features[0].properties.name = "Track";
-      geodraw.features[0].properties.color = "purple";
+      json.features[0].properties.name = "Track";
+      json.features[0].properties.color = "purple";
 
       this.drawBoundary(fileBoundingBox);
 
       this.legend = document.getElementById('legend');
       this.clearLegend();      
-      this.addToLegend(geodraw.features[0].properties.name, 
-			geodraw.features[0].properties.color);	
+      this.addToLegend(json.features[0].properties.name, 
+			json.features[0].properties.color);	
 
-      this.props.map.data.addGeoJson(geodraw, {idPropertyName: "name"});
+      this.props.map.data.addGeoJson(json, {idPropertyName: "name"});
 
       var fileDialog = document.getElementById('fileSelectDialog')
       this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].clear();
@@ -90,15 +107,23 @@ class GpxFileComponent extends React.Component {
     //Now called in clearMap()---Cut previous boundary line
     this.clearBoundary();
 
-    var northeast = boundingBox.getNorthEast();
-    var southwest = boundingBox.getSouthWest();
+    //var northeast = boundingBox.getNorthEast();
+    //var southwest = boundingBox.getSouthWest();
 
+    var west = boundingBox[0], south = boundingBox[1], east = boundingBox[2],
+	north = boundingBox[3];
     var pad = 0.5;
-    var pathCoordinates = [ {lat: northeast.lat()+pad, lng: northeast.lng()+pad}, 
+    var pathCoordinates = [ {lat: north+pad, lng: east+pad},
+                {lat: south-pad, lng: east+pad},
+                {lat: south-pad, lng: west-pad},
+                {lat: north+pad, lng: west-pad},
+                {lat: north+pad, lng: east.lng+pad} ];
+
+    /*var pathCoordinates = [ {lat: northeast.lat()+pad, lng: northeast.lng()+pad}, 
 		{lat: southwest.lat()-pad, lng: northeast.lng()+pad},
                 {lat: southwest.lat()-pad, lng: southwest.lng()-pad}, 
 		{lat: northeast.lat()+pad, lng: southwest.lng()-pad},
-                {lat: northeast.lat()+pad, lng: northeast.lng()+pad} ];
+                {lat: northeast.lat()+pad, lng: northeast.lng()+pad} ]; */
     var lineSymbol = {
 	path: 'M 0,-1 0,1',
         strokeOpacity: 1,
@@ -133,8 +158,10 @@ class GpxFileComponent extends React.Component {
 
   useTestData = function(e) {
     console.log('using test data from server');
-    this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:" + config.serverPort + 
-	"/NorCalShastaOption.gpx");
+    //this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:" + config.serverPort + 
+	//"/NorCalShastaOption.gpx");
+    this.loadGeobufTrackIntoGoogleMap("http://phillipdaw.com:" + config.serverPort +
+	"/getTestRoute");
   }
 
   componentDidMount() {

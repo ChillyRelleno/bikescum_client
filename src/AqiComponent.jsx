@@ -45,14 +45,17 @@ class AqiComponent extends React.Component {
  }
 
   getAqiData() {
-    var southwest = this.boundingBox.getSouthWest();
-    var northeast = this.boundingBox.getNorthEast();
-
+    //var southwest = this.boundingBox.getSouthWest();
+    //var northeast = this.boundingBox.getNorthEast();
+    var west = this.boundingBox[0] - this.props.padding, 
+	south = this.boundingBox[1] - this.props.padding,
+	 east = this.boundingBox[2] + this.props.padding,
+        north = this.boundingBox[3] + this.props.padding;
     //Ad some padding
-    var west = southwest.lng() - this.props.padding;
+    /*var west = southwest.lng() - this.props.padding;
     var south = southwest.lat() - this.props.padding;
     var east = northeast.lng() + this.props.padding;
-    var north = northeast.lat() + this.props.padding;
+    var north = northeast.lat() + this.props.padding;*/
     var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + 
 			this.props.date.getFullYear() + "-" + 
 			(this.props.date.getMonth()+1) + "-" + 

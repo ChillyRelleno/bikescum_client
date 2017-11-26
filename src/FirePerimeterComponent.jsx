@@ -51,18 +51,22 @@ class FirePerimeterComponent extends React.Component {
   }
 
   getPerimData() {
-    var southwest = this.boundingBox.getSouthWest()
-    var northeast = this.boundingBox.getNorthEast()
+    //var southwest = this.boundingBox.getSouthWest()
+    //var northeast = this.boundingBox.getNorthEast()
     //Ad some padding
-    var west = southwest.lng() - this.props.padding;
-    var south = southwest.lat() - this.props.padding;
-    var east = northeast.lng() + this.props.padding;
-    var north = northeast.lat() + this.props.padding;
-
+    //var west = southwest.lng() - this.props.padding;
+    //var south = southwest.lat() - this.props.padding;
+    //var east = northeast.lng() + this.props.padding;
+    //var north = northeast.lat() + this.props.padding;
+    var west = this.boundingBox[0] - this.props.padding,
+        south = this.boundingBox[1] - this.props.padding,
+         east = this.boundingBox[2] + this.props.padding,
+        north = this.boundingBox[3] + this.props.padding;
 
     var url = "http://phillipdaw.com:" + config.serverPort + "/filter/fire/" + 
-		southwest.lng().toFixed(4) + "/" + southwest.lat().toFixed(4) + 
-		"/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4);
+		west + "/" + south + "/" + east + "/" + north;
+		//southwest.lng().toFixed(4) + "/" + southwest.lat().toFixed(4) + 
+		//"/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4);
     fetch(url)
 	.then(response => response.arrayBuffer())
 	.then(arrbuf => this.geobufToGeojson(arrbuf) )
