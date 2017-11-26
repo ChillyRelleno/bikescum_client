@@ -69,6 +69,9 @@ class GpxFileComponent extends React.Component {
       //Setup parser
       //var parser = new GPXParser(xml, this.props.map);
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
+	
+      //CENTER MAP
+
 
       //Set up event so features can color themselves
       this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
@@ -89,6 +92,18 @@ class GpxFileComponent extends React.Component {
 			json.features[0].properties.color);	
 
       this.props.map.data.addGeoJson(json, {idPropertyName: "name"});
+
+      //this.props.map.setCenter(
+	//new google.maps.LatLng((fileBoundingBox[1]+fileBoundingBox[3])/2,
+	//	(fileBoundingBox[0] + fileBoundingBox[2])/2));
+
+      var latlngBounds = new this.props.google.maps.LatLngBounds();
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+				lng:fileBoundingBox[0], lat:fileBoundingBox[1] }));
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:fileBoundingBox[2], lat:fileBoundingBox[3]}));
+console.log(latlngBounds)
+      this.props.map.fitBounds(latlngBounds);//new this.props.google.maps.LatLngBounds());
 
       var fileDialog = document.getElementById('fileSelectDialog')
       this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].clear();
