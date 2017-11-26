@@ -15,7 +15,8 @@ class AqiComponent extends React.Component {
     padding: PropTypes.number,
     apiKey: PropTypes.string,
     date: PropTypes.instanceOf(Date),
-    url: PropTypes.string
+    url: PropTypes.string,
+    addToLegend: PropTypes.any
   };
 
   static defaultProps = {
@@ -23,7 +24,8 @@ class AqiComponent extends React.Component {
     padding: 0.5,
     apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     date: new Date(),
-    url: "http://phillipdaw.com:" + config.serverPort + "/testAqi.kml"
+    url: "http://phillipdaw.com:" + config.serverPort + "/testAqi.kml",
+    addToLegend: null
   };
 
   constructor(props) {
@@ -78,6 +80,10 @@ class AqiComponent extends React.Component {
   
   useAqiData(geojson) {
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name"});
+ console.log(geojson);
+    this.props.addToLegend("Air Quality",  geojson.properties.legend);
+    //this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
+
     return geojson;
   }//useAqiData
 

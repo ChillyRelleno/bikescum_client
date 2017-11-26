@@ -180,13 +180,15 @@ console.log(latlngBounds)
     this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].clear()
     this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
   }
+  
 
   addToLegend = (name, color) => {
     var toAdd = [name, color];
     var div = document.createElement('div');
+    var width = 40;
     div.innerHTML = 
-        '<svg width="50" height="20" viewBox="0 0 50 20">' + 
-	'<rect x="10" y="10" width="30" height="10" style="fill:'+color+'"/></svg>' 
+        '<svg width="' +width + '" height="15" viewBox="0 0 ' + width + ' 15">' + 
+	'<rect x="0" y="5" width="'+width+'" height="10" style="fill:'+color+'"/></svg>' 
 			+ name
     this.legend.appendChild(div);
 
@@ -194,6 +196,33 @@ console.log(latlngBounds)
 	this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
     controls.push(div)
   }
+
+  addAqiToLegend = (name, legendLiteral) => {
+    legendLiteral.sort()
+
+    var width = 40;
+    var count = legendLiteral.length;
+    var widthInc = width / count;
+    if (Math.round(widthInc) !== widthInc) widthInc = widthInc.toFixed(4);
+    var div = document.createElement('div');
+    var str = '<svg width="' +width + '" height="15" viewBox="0 0 ' + width + ' 15">';
+
+    var i = 0;
+    for (i = 0; i<count; i++) {
+      str = str + '<rect x="' + (i*widthInc) + '" y="5" width="'+widthInc +
+	'" height="10" style="fill:'+legendLiteral[i][1]+'"/>';
+
+    }//for legend entries
+     str = str + '</svg>' + name;
+  console.log(str)
+    div.innerHTML = str;
+    this.legend.appendChild(div);
+
+    var controls =
+        this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
+    controls.push(div)
+
+  }//addAqiToLegend
 
   render() {
     var toDisplay;
@@ -216,7 +245,7 @@ console.log(latlngBounds)
 		      <AqiComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
 			map = {this.props.map}
-			addToLegend={this.addToLegend}/> 
+			addToLegend={this.addAqiToLegend}/> 
 		      <FirePerimeterComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
 			map = {this.props.map} 

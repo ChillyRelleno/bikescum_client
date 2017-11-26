@@ -55,7 +55,7 @@ class GMap extends React.Component {
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
-          <div id="legend" className="mapControls"> </div>
+          <div id="legend" className="mapControls lowMargin"> </div>
         </div>  
 
     );
