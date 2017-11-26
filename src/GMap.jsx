@@ -34,7 +34,7 @@ class GMap extends React.Component {
   }
 
 
-  componentDidMount() {  }
+  componentDidMount() { document.title = "Ride On Fire!" }
   componentDidUpdate() { }
  
 //          <div id="legend" style={legendStyle}> </div>
