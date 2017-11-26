@@ -10,6 +10,8 @@ import Geobuf from 'geobuf';
 import Pbf from 'pbf';
 import GeoBounds from 'geojson-bounds'
 
+const util = require('util')
+
 
 class GpxFileComponent extends React.Component {
   boundaryLine = null;
@@ -67,20 +69,75 @@ class GpxFileComponent extends React.Component {
       this.clearMap();
 
       //Setup parser
-      //var parser = new GPXParser(xml, this.props.map);
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 	
       //CENTER MAP
 
+/*'<svg width="40" height="15" viewBox="0 0 40 15">' +
+        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+                        
+*/
 
       //Set up event so features can color themselves
       this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-	console.log(fileBoundingBox)
+      //add listeners
+      this.props.map.data.addListener('click', (event) => {
+	var message, svg;
+        if (event.feature.getProperty('type') == "AQI") {
+	  var lvl = event.feature.getProperty('styleUrl').charAt(1)
+	  var color = event.feature.getProperty('color');
+	  message = " Air particulate warning level " + lvl;
+	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+        }//if aqi
+	else if (event.feature.getProperty('type') == "Fire") {
+	  var name = event.feature.getProperty('name');
+	  var color = event.feature.getProperty('color');
+	  message = " FIRE: " + name;
+	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+        }//else if fire
+	else {//GPX
+	  console.log(event.feature);
+	  var color = event.feature.getProperty('color');
+	  var name = event.feature.getProperty('name');
+	  message = " Route";
+	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+        }//else it's gotta be GPX
+
+	if (!this.infoWindow) {
+	  console.log('no infowindow');
+	  this.infoWindow = new this.props.google.maps.InfoWindow();
+	}//if
+	else this.infoWindow.close();
+	this.infoWindow.setContent(
+		"<div style='width:auto;text-align: center; padding:0px;'>" +
+		svg + message + "</div>");
+	this.infoWindow.setPosition(event.latLng);
+	//this.infoWindow.setOptions({pixelOffset: new this.props.google.maps.Size(0,-30)});
+	this.infoWindow.open(this.props.map);
+      });//feature click listener callback
+
+      this.props.map.data.addListener('mouseover', (event) => {
+	//console.log(this.props.map.data.getStyle());
+
+	this.props.map.data.overrideStyle(event.feature, 
+		{ strokeWeight: 6 });
+//this.props.map.data.getStyle().strokeWeight + 2});
+      });//mouseover event
+
+      this.props.map.data.addListener('mouseout', (event) => {
+	 this.props.map.data.overrideStyle(event.feature,
+		{ strokeWeight: 3 });
+      });//mouseout event
+
       //prepare for draw, change state
       this.drawBoundary(fileBoundingBox);
 
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
+	console.log(json);
       json.features[0].properties.name = "Track";
       json.features[0].properties.color = "purple";
 
@@ -102,7 +159,6 @@ class GpxFileComponent extends React.Component {
 				lng:fileBoundingBox[0], lat:fileBoundingBox[1] }));
       latlngBounds.extend(new this.props.google.maps.LatLng({
                                 lng:fileBoundingBox[2], lat:fileBoundingBox[3]}));
-console.log(latlngBounds)
       this.props.map.fitBounds(latlngBounds);//new this.props.google.maps.LatLngBounds());
 
       var fileDialog = document.getElementById('fileSelectDialog')
@@ -142,7 +198,8 @@ console.log(latlngBounds)
 	  path: pathCoordinates,
 	  strokeOpacity: 0,
 	  icons: [{ icon: lineSymbol, offset: '0', repeat: '20px' }],
-	  map: this.props.map
+	  map: this.props.map,
+	  zIndex: 300
       });
   }//drawBoundary
 
@@ -151,8 +208,16 @@ console.log(latlngBounds)
     var style ={strokeColor:feature.getProperty('color'),
                 fillColor: feature.getProperty('color'),
                 fillOpacity: feature.getProperty('opacity')};
-    this.props.map.data.overrideStyle(feature, style
-     );
+    var type = feature.getProperty('type');
+    if (type == "Fire") style['zIndex'] = 99;
+    else if (type == "AQI") {
+	var zIndex = 0, increment = 10;
+	zIndex += Number(String(feature.getProperty('styleUrl')).charAt(1)) * increment;
+	style['zIndex'] = zIndex;
+    }//AQI
+    else style['zIndex'] = 50;
+    this.props.map.data.overrideStyle(feature, style  );
+
   }
   handleFile = function(e, results) {
     results.forEach(result => {
@@ -214,7 +279,6 @@ console.log(latlngBounds)
 
     }//for legend entries
      str = str + '</svg>' + name;
-  console.log(str)
     div.innerHTML = str;
     this.legend.appendChild(div);
 
