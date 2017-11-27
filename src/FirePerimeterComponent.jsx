@@ -63,7 +63,9 @@ class FirePerimeterComponent extends React.Component {
          east = this.boundingBox[2] + this.props.padding,
         north = this.boundingBox[3] + this.props.padding;
 
-    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/fire/" + 
+    var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
+    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/" + fireSeason + 
+	"fire/" + 
 		west + "/" + south + "/" + east + "/" + north;
 		//southwest.lng().toFixed(4) + "/" + southwest.lat().toFixed(4) + 
 		//"/" + northeast.lng().toFixed(4) + "/" + northeast.lat().toFixed(4);

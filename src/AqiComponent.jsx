@@ -67,9 +67,14 @@ class AqiComponent extends React.Component {
 
     console.log(aqiapi);
 
+/*  var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
+    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/" + fireSeason +
+        "fire/" +
+*/
+    var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
     //use test kml for development to avoid query limits
     var testurl = "http://phillipdaw.com:" + config.serverPort + 
-			"/filter/aqi/" + west + "/" +
+			"/filter/" + fireSeason + "aqi/" + west + "/" +
 			south + "/" + east + "/" + north
     //PreFiltered by bounds data at'http://phillipdaw.com:' + config.serverPort + '/testAqi.kml';
     fetch(testurl)

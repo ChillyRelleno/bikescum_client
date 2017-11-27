@@ -23,7 +23,7 @@ class GpxFileComponent extends React.Component {
       legend: new Array()
     };
     this.parseXml = this.chooseXmlParser();
-    this.useFireSeasonData = false;
+    this.state.useFireSeasonData = false;
   }//constructor
 
   loadGPXUrlIntoGoogleMap = ( url) => {
@@ -68,7 +68,7 @@ class GpxFileComponent extends React.Component {
     if (json !== null) {
       //Clear map
       this.clearMap();
-
+      if (this.infoWindow) this.infoWindow.close();
       //Setup parser
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 	
@@ -290,7 +290,9 @@ class GpxFileComponent extends React.Component {
   }//addAqiToLegend
 
   handleFireSeasonChange = (isChecked) => {
-    this.useFireSeasonData = isChecked;
+    //this.useFireSeasonData = isChecked;
+    this.setState({useFireSeasonData: isChecked});
+//    console.log(this.useFireSeasonData);
   }//handlefireseasonchange
 
   render() {
@@ -307,6 +309,7 @@ class GpxFileComponent extends React.Component {
 			<Checkbox label="Use Fire Season Data" 
 				handleCheckboxChange={this.handleFireSeasonChange}
 				style={{padding:"0px"}}
+				checked = {this.state.useFireSeasonData}
 			/>
                       </form>
 	);
@@ -318,11 +321,13 @@ class GpxFileComponent extends React.Component {
 		      <AqiComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
 			map = {this.props.map}
-			addToLegend={this.addAqiToLegend}/> 
+			addToLegend={this.addAqiToLegend}
+			useFireSeasonData = {this.state.useFireSeasonData}/> 
 		      <FirePerimeterComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
 			map = {this.props.map} 
-			addToLegend={this.addToLegend}/>
+			addToLegend={this.addToLegend}
+			useFireSeasonData = {this.state.useFireSeasonData}/>
 		      {fileDialog}
 		</div>
 			);
