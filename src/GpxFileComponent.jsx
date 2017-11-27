@@ -9,7 +9,7 @@ import config from './config.js';
 import Geobuf from 'geobuf';
 import Pbf from 'pbf';
 import GeoBounds from 'geojson-bounds'
-
+import Checkbox from './Checkbox.jsx';
 const util = require('util')
 
 
@@ -23,6 +23,7 @@ class GpxFileComponent extends React.Component {
       legend: new Array()
     };
     this.parseXml = this.chooseXmlParser();
+    this.useFireSeasonData = false;
   }//constructor
 
   loadGPXUrlIntoGoogleMap = ( url) => {
@@ -288,6 +289,10 @@ class GpxFileComponent extends React.Component {
 
   }//addAqiToLegend
 
+  handleFireSeasonChange = (isChecked) => {
+    this.useFireSeasonData = isChecked;
+  }//handlefireseasonchange
+
   render() {
     var toDisplay;
     var selectFile;
@@ -295,10 +300,14 @@ class GpxFileComponent extends React.Component {
     var fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
                         <FileReaderInput as="text" id="gpx-file-input"
                           onChange={this.handleFile.bind(this)}>
-                          <button type="button">Select a file!</button>
+                          <button type="button">Select GPX file</button>
                         </FileReaderInput>
                         <button type="button" onClick={this.useTestData.bind(this)}>
-				Use demo data</button>
+				Use demo GPX</button>
+			<Checkbox label="Use Fire Season Data" 
+				handleCheckboxChange={this.handleFireSeasonChange}
+				style={{padding:"0px"}}
+			/>
                       </form>
 	);
 
