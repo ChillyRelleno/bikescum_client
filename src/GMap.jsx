@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
-import styles from './GMap.css'
+import styles from './GMap.css';
+import config from './config.js';
 
 class GMap extends React.Component {
   static propTypes = {
@@ -53,11 +54,12 @@ class GMap extends React.Component {
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
-          <div id="legend" className="mapControls lowMargin"> </div>
         </div>  
 
     );
   };
+//          <div id="legend" className="mapControls lowMargin"> </div>
+
   //WORKS as center in render: initialCenter={{  lat: 45.5231,  lng: -122.9765 }}
 
   componentWillUnmount() {
@@ -72,7 +74,7 @@ GMap.propTypes = {
 
 //export default GMap;
 export default GoogleApiWrapper({
-  apiKey: ("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
+  apiKey: (config.googleMapsApiKey)//("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
 })(GMap)
 
 

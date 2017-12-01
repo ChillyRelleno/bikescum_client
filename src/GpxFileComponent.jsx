@@ -10,11 +10,12 @@ import Checkbox from './Checkbox.jsx';
 //geobufFun == {geobufToGeojson, geojsonToGeobuf}
 import geobufFun from './lib/geobufFun.js';
 import Legend from './lib/legend.js';
+import Boundary from './lib/boundary.js';
 const util = require('util')
 
 
 class GpxFileComponent extends React.Component {
-  boundaryLine = null;
+  //boundaryLine = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -56,8 +57,7 @@ class GpxFileComponent extends React.Component {
     this.props.map.data.forEach((feature) => {    //function(feature) {
       this.props.map.data.remove(feature);
     });
-    //Doesn't work for some reason?
-    //this.clearBoundary();
+    if (this.Boundary)  this.Boundary.clearBoundary();
   }
 
   featureClick = (event) => {
@@ -134,8 +134,10 @@ class GpxFileComponent extends React.Component {
       this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
       this.addListeners();
+
       //prepare for draw, change state
-      this.drawBoundary(fileBoundingBox);
+      this.Boundary = new Boundary(this.props.map, this.props.google);
+      this.Boundary.drawBoundary(fileBoundingBox);
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
 	console.log(json);
       json.features[0].properties.name = "Track";
@@ -163,41 +165,6 @@ class GpxFileComponent extends React.Component {
 
     }//if xml loaded
   }//drawGpx
-
-  clearBoundary = () => {
-    //Cut previous boundary line
-    if (this.boundaryLine)
-      this.boundaryLine.setMap(null);
-  }
-
-  drawBoundary = (boundingBox) => {
-    //Now called in clearMap()---Cut previous boundary line
-    this.clearBoundary();
-
-    var west = boundingBox[0], south = boundingBox[1], east = boundingBox[2],
-	north = boundingBox[3];
-    var pad = 0.5;
-    var pathCoordinates = [ {lat: north+pad, lng: east+pad},
-                {lat: south-pad, lng: east+pad},
-                {lat: south-pad, lng: west-pad},
-                {lat: north+pad, lng: west-pad},
-                {lat: north+pad, lng: east+pad} ];
-
-    var lineSymbol = {
-	path: 'M 0,-1 0,1',
-        strokeOpacity: 1,
-	strokeColor: "green",
-        scale: 4,
-	strokeWeight: 1
-      };
-      this.boundaryLine = new this.props.google.maps.Polyline( {
-	  path: pathCoordinates,
-	  strokeOpacity: 0,
-	  icons: [{ icon: lineSymbol, offset: '0', repeat: '20px' }],
-	  map: this.props.map,
-	  zIndex: 300
-      });
-  }//drawBoundary
 
   setFeatureStyle = function (featureFeature) {
     var feature = featureFeature.feature;
@@ -233,53 +200,14 @@ class GpxFileComponent extends React.Component {
   componentDidMount() {
   }//componentDidMount
 
-
-  clearLegend = () => {
-    this.legend.innerHTML = "<h3>Legend</h3>";
-    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].clear()
-    this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(this.legend);
-  }
-  
-
+  //This callback is needed to facilitate communication between children
   addToLegend = (name, color) => {
-    var toAdd = [name, color];
-    var div = document.createElement('div');
-    var width = 40;
-    div.innerHTML = 
-        '<svg width="' +width + '" height="15" viewBox="0 0 ' + width + ' 15">' + 
-	'<rect x="0" y="5" width="'+width+'" height="10" style="fill:'+color+'"/></svg>' 
-			+ name
-    this.legend.appendChild(div);
+	this.legend.addToLegend(name, color);
+  }//addToLegend
 
-    var controls = 
-	this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
-    controls.push(div)
-  }
-
+  //This callback is needed to facilitate communication between children
   addAqiToLegend = (name, legendLiteral) => {
-    legendLiteral.sort()
-
-    var width = 40;
-    var count = legendLiteral.length;
-    var widthInc = width / count;
-    if (Math.round(widthInc) !== widthInc) widthInc = widthInc.toFixed(4);
-    var div = document.createElement('div');
-    var str = '<svg width="' +width + '" height="15" viewBox="0 0 ' + width + ' 15">';
-
-    var i = 0;
-    for (i = 0; i<count; i++) {
-      str = str + '<rect x="' + (i*widthInc) + '" y="5" width="'+widthInc +
-	'" height="10" style="fill:'+legendLiteral[i][1]+'"/>';
-
-    }//for legend entries
-     str = str + '</svg>' + name;
-    div.innerHTML = str;
-    this.legend.appendChild(div);
-
-    var controls =
-        this.props.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
-    controls.push(div)
-
+    this.legend.addAqiToLegend(name, legendLiteral);
   }//addAqiToLegend
 
   handleFireSeasonChange = (isChecked) => {
