@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import FileReaderInput from 'react-file-reader-input';
-import GPXParser from './loadgpx.js';
 import GMap from './GMap.jsx';
 import AqiComponent from './AqiComponent.jsx';
 import FirePerimeterComponent from './FirePerimeterComponent.jsx';
 import toGeoJSON from './lib/togeojson.js';
 import config from './config.js';
-import Geobuf from 'geobuf';
-import Pbf from 'pbf';
 import GeoBounds from 'geojson-bounds'
 import Checkbox from './Checkbox.jsx';
+//geobufFun == {geobufToGeojson, geojsonToGeobuf}
+import geobufFun from './lib/geobufFun.js';
+import Legend from './lib/legend.js';
 const util = require('util')
 
 
@@ -33,14 +33,10 @@ class GpxFileComponent extends React.Component {
       .then(xml => this.drawGpx(xml));
   }
 
-  geobufToGeojson = function(geobuf) {
-    return Geobuf.decode( new Pbf(geobuf) );
-  }
-
   loadGeobufTrackIntoGoogleMap = (url) => {
     fetch(url)
         .then(response => response.arrayBuffer())
-        .then(arrbuf => this.geobufToGeojson(arrbuf) )
+        .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
         .then(geojson => this.drawGpx(geojson));
 
     //var json = geobufToGeojson(geobuf);
@@ -64,6 +60,68 @@ class GpxFileComponent extends React.Component {
     //this.clearBoundary();
   }
 
+  featureClick = (event) => {
+    var message, svg;
+    if (event.feature.getProperty('type') == "AQI") {
+      var lvl = event.feature.getProperty('styleUrl').charAt(1)
+      var color = event.feature.getProperty('color');
+      message = " Air particulate warning level " + lvl;
+      svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+            '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+    }//if aqi
+    else if (event.feature.getProperty('type') == "Fire") {
+      var name = event.feature.getProperty('name');
+      var color = event.feature.getProperty('color');
+      message = " FIRE: " + name;
+      svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+            '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+    }//else if fire
+    else {//GPX
+      console.log(event.feature);
+      var color = event.feature.getProperty('color');
+      var name = event.feature.getProperty('name');
+      message = " Route";
+      svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
+            '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
+    }//else it's gotta be GPX
+
+    if (!this.infoWindow) {
+      this.infoWindow = new this.props.google.maps.InfoWindow();
+    }//if
+    else this.infoWindow.close();
+    this.infoWindow.setContent(
+            "<div style='width:auto;text-align: center; padding:0px;'>" +
+            svg + message + "</div>");
+    this.infoWindow.setPosition(event.latLng);
+    this.infoWindow.open(this.props.map);
+  }//feature click listener callback
+
+
+  addListeners = () => {
+   //MAP click
+   this.props.map.addListener('click', (event) => {
+     this.infoWindow.close();
+   });
+   //MAP dblclick
+   this.props.map.addListener('dblclick', (event) => { this.infoWindow.close(); })
+   this.props.map.data.addListener('dblclick', (event) =>{this.infoWindow.close();})
+
+   //Feature click
+   this.props.map.data.addListener('click', this.featureClick);//feature click listener callback
+
+   //feature mouseover
+   this.props.map.data.addListener('mouseover', (event) => {
+     this.props.map.data.overrideStyle(event.feature, { strokeWeight: 6 });
+   });//mouseover event
+
+   //Feature mouseout
+   this.props.map.data.addListener('mouseout', (event) => {
+      this.props.map.data.overrideStyle(event.feature,
+             { strokeWeight: 3 });
+   });//mouseout event
+
+  }//adListeners
+
   drawGpx = (json) => { //xml) => {
     if (json !== null) {
       //Clear map
@@ -72,96 +130,33 @@ class GpxFileComponent extends React.Component {
       //Setup parser
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 	
-      //CENTER MAP
-
-/*'<svg width="40" height="15" viewBox="0 0 40 15">' +
-        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
-                        
-*/
-
       //Set up event so features can color themselves
       this.props.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      //add listeners
-      this.props.map.data.addListener('click', (event) => {
-	var message, svg;
-        if (event.feature.getProperty('type') == "AQI") {
-	  var lvl = event.feature.getProperty('styleUrl').charAt(1)
-	  var color = event.feature.getProperty('color');
-	  message = " Air particulate warning level " + lvl;
-	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
-	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
-        }//if aqi
-	else if (event.feature.getProperty('type') == "Fire") {
-	  var name = event.feature.getProperty('name');
-	  var color = event.feature.getProperty('color');
-	  message = " FIRE: " + name;
-	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
-	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
-        }//else if fire
-	else {//GPX
-	  console.log(event.feature);
-	  var color = event.feature.getProperty('color');
-	  var name = event.feature.getProperty('name');
-	  message = " Route";
-	  svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
-	        '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
-        }//else it's gotta be GPX
-
-	if (!this.infoWindow) {
-	  console.log('no infowindow');
-	  this.infoWindow = new this.props.google.maps.InfoWindow();
-	}//if
-	else this.infoWindow.close();
-	this.infoWindow.setContent(
-		"<div style='width:auto;text-align: center; padding:0px;'>" +
-		svg + message + "</div>");
-	this.infoWindow.setPosition(event.latLng);
-	//this.infoWindow.setOptions({pixelOffset: new this.props.google.maps.Size(0,-30)});
-	this.infoWindow.open(this.props.map);
-      });//feature click listener callback
-
-      this.props.map.data.addListener('mouseover', (event) => {
-	//console.log(this.props.map.data.getStyle());
-
-	this.props.map.data.overrideStyle(event.feature, 
-		{ strokeWeight: 6 });
-//this.props.map.data.getStyle().strokeWeight + 2});
-      });//mouseover event
-
-      this.props.map.data.addListener('mouseout', (event) => {
-	 this.props.map.data.overrideStyle(event.feature,
-		{ strokeWeight: 3 });
-      });//mouseout event
-
+      this.addListeners();
       //prepare for draw, change state
       this.drawBoundary(fileBoundingBox);
-
       this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
 	console.log(json);
       json.features[0].properties.name = "Track";
       json.features[0].properties.color = "purple";
 
-      this.drawBoundary(fileBoundingBox);
-
-      this.legend = document.getElementById('legend');
-      this.clearLegend();      
-      this.addToLegend(json.features[0].properties.name, 
+      //LEGEND setup
+      this.legend = new Legend(this.props.map, this.props.google);//document.getElementById('legend');
+      this.legend.clearLegend();      
+      this.legend.addToLegend(json.features[0].properties.name, 
 			json.features[0].properties.color);	
-
+      //Add GPX
       this.props.map.data.addGeoJson(json, {idPropertyName: "name"});
 
-      //this.props.map.setCenter(
-	//new google.maps.LatLng((fileBoundingBox[1]+fileBoundingBox[3])/2,
-	//	(fileBoundingBox[0] + fileBoundingBox[2])/2));
-
+      //CENTER MAP
       var latlngBounds = new this.props.google.maps.LatLngBounds();
       latlngBounds.extend(new this.props.google.maps.LatLng({
 				lng:fileBoundingBox[0], lat:fileBoundingBox[1] }));
       latlngBounds.extend(new this.props.google.maps.LatLng({
                                 lng:fileBoundingBox[2], lat:fileBoundingBox[3]}));
       this.props.map.fitBounds(latlngBounds);//new this.props.google.maps.LatLngBounds());
-
+      //Push file dialog onto controls, must clear first
       var fileDialog = document.getElementById('fileSelectDialog')
       this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].clear();
       this.props.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(fileDialog)
@@ -231,8 +226,6 @@ class GpxFileComponent extends React.Component {
 
   useTestData = function(e) {
     console.log('using test data from server');
-    //this.loadGPXUrlIntoGoogleMap("http://phillipdaw.com:" + config.serverPort + 
-	//"/NorCalShastaOption.gpx");
     this.loadGeobufTrackIntoGoogleMap("http://phillipdaw.com:" + config.serverPort +
 	"/getTestRoute");
   }
@@ -290,9 +283,7 @@ class GpxFileComponent extends React.Component {
   }//addAqiToLegend
 
   handleFireSeasonChange = (isChecked) => {
-    //this.useFireSeasonData = isChecked;
     this.setState({useFireSeasonData: isChecked});
-//    console.log(this.useFireSeasonData);
   }//handlefireseasonchange
 
   render() {

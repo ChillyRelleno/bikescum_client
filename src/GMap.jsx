@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
-//import MapMarker from './MapMarker.jsx';
-import {K_SIZE} from './MapMarkerStyles.js';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
 import styles from './GMap.css'

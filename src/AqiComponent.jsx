@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import toGeoJSON from './lib/togeojson.js';
-//import FileReaderInput from 'react-file-reader-input';
-//import GPXParser from './loadgpx.js';
-//import GMap from './GMap.jsx';
 import Geobuf from 'geobuf';
 import Pbf from 'pbf';
 import config from './config.js'
@@ -30,7 +27,6 @@ class AqiComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    //this.state = {boundingBox: this.props.boundingBox};
     this.boundingBox = this.props.boundingBox;
     this.getAqiData();
   }//constructor
@@ -47,17 +43,10 @@ class AqiComponent extends React.Component {
  }
 
   getAqiData() {
-    //var southwest = this.boundingBox.getSouthWest();
-    //var northeast = this.boundingBox.getNorthEast();
     var west = this.boundingBox[0] - this.props.padding, 
 	south = this.boundingBox[1] - this.props.padding,
 	 east = this.boundingBox[2] + this.props.padding,
         north = this.boundingBox[3] + this.props.padding;
-    //Ad some padding
-    /*var west = southwest.lng() - this.props.padding;
-    var south = southwest.lat() - this.props.padding;
-    var east = northeast.lng() + this.props.padding;
-    var north = northeast.lat() + this.props.padding;*/
     var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + 
 			this.props.date.getFullYear() + "-" + 
 			(this.props.date.getMonth()+1) + "-" + 
@@ -67,10 +56,6 @@ class AqiComponent extends React.Component {
 
     console.log(aqiapi);
 
-/*  var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
-    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/" + fireSeason +
-        "fire/" +
-*/
     var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
     //use test kml for development to avoid query limits
     var testurl = "http://phillipdaw.com:" + config.serverPort + 
@@ -85,9 +70,7 @@ class AqiComponent extends React.Component {
   
   useAqiData(geojson) {
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name" });
- console.log(geojson);
     this.props.addToLegend("Air Quality",  geojson.properties.legend);
-    //this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
 
     return geojson;
   }//useAqiData
