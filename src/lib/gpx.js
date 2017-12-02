@@ -13,7 +13,6 @@ class GPX {
     this.legendDiv.innerHTML = "<h3>Legend</h3>";
     this.map = map;
     this.google = google;
-//    this.controlPosition = this.google.maps.ControlPosition.BOTTOM_CENTER; 
   }//constructor
 
   drawGpx = (json) => { //xml) => {

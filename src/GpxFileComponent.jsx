@@ -51,10 +51,13 @@ class GpxFileComponent extends React.Component {
 //this.props.map.controls[this.props.google.maps.ControlPosition.BOTTOM_CENTER].clear();
 
     var data = this.GPX.drawGpx(data);
+
     var fileBoundingBox = data.fileBoundingBox;
     this.legend = data.legend;
-  this.addFileDialogToControls();
     this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
+  this.addFileDialogToControls();
+
+
   }
 
   loadGPXUrlIntoGoogleMap = ( url) => {
