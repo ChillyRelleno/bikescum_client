@@ -6,6 +6,8 @@ class Legend {
     //super();
     //this.rootDiv = root;
     this.legendDiv = document.createElement('div');
+    this.legendDiv.className = "mapControls lowMargin";
+    this.legendDiv.setAttribute("id", "legend");
     this.legendDiv.innerHTML = "<h3>Legend</h3>";
     this.map = map;
     this.google = google;

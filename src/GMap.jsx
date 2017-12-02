@@ -28,8 +28,14 @@ class GMap extends React.Component {
   }//constructor
 
   addFileDialogToControls = (props, map) => {
-    var div = document.getElementById('fileSelectDialog')
-    map.controls[this.props.google.maps.ControlPosition.BOTTOM_CENTER].push(div)
+    var position = this.props.google.maps.ControlPosition.BOTTOM_CENTER
+    if (map.controls[position].length == 0) { 
+      console.log('madeit')
+      var div = document.getElementById('fileSelectDialog')
+      //var oldControls = controls
+      map.controls[position].clear();
+      map.controls[position].push(div)
+    }//if
   }
 
 
@@ -59,6 +65,7 @@ class GMap extends React.Component {
     );
   };
 //          <div id="legend" className="mapControls lowMargin"> </div>
+//<Map ... onReady={this.addFileDialogToControls}>
 
   //WORKS as center in render: initialCenter={{  lat: 45.5231,  lng: -122.9765 }}
 
