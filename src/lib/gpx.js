@@ -13,6 +13,10 @@ class GPX {
     this.legendDiv.innerHTML = "<h3>Legend</h3>";
     this.map = map;
     this.google = google;
+     //Set up event so features can color themselves
+      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+
+      this.addListeners();
   }//constructor
 
   drawGpx = (json) => { //xml) => {
@@ -24,9 +28,9 @@ class GPX {
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 
       //Set up event so features can color themselves
-      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+    //  this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      this.addListeners();
+      //this.addListeners();
 
       //prepare for draw, change state
       this.Boundary = new Boundary(this.map, this.google);
@@ -100,6 +104,9 @@ class GPX {
       svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
             '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
     }//else if fire
+    else if (event.feature.getProperty('time') !== undefined) {
+	message = event.feature.getProperty('time');
+    }
     else {//GPX
       console.log(event.feature);
       var color = event.feature.getProperty('color');

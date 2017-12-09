@@ -9,16 +9,22 @@ class PositionComponent extends React.Component {
   constructor(props) {
     super(props);
 //    this.state = {isFileSelected : false,  gpx : null};
+    this.marker = new this.props.google.maps.Marker(
+		{
+			position: {lat:this.props.lat, lng:this.props.lng},//this.props.position,
+			map: this.props.map,
+			title: this.props.name
+		});
   }//constructor
 
   render() {
-    var pos = {lat: this.props.lat, lng: this.props.lng};
-    return (<Marker name={this.props.time}
-	      position={ pos } 
-	      google={this.props.google}
-		map={this.props.map}
-		/> );
-    //return null;
+    //var pos = {lat: this.props.lat, lng: this.props.lng};
+    //return (<Marker name={this.props.time}
+	//      position={ pos } 
+	//      google={this.props.google}
+	//	map={this.props.map}
+	//	/> );
+    return null;
   }
 
 

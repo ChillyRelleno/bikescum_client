@@ -8,6 +8,7 @@ import styles from './GMap.css';
 import config from './config.js';
 import TrackerComponent from './TrackerComponent.jsx';
 //import PositionComponent from './PositionComponent.jsx';
+import ReactTimeout from 'react-timeout'
 
 class GMap extends React.Component {
   static propTypes = {
@@ -23,7 +24,12 @@ class GMap extends React.Component {
     MapMarkerCoords: {lat: 45.5231, lng: -122.6765},
     hasData: false
   };
-
+  mapReady = (map, position) => { 
+    this.props.setTimeout(()=>{ this.setState({mapReady: true}); },1000);
+    var div = document.getElementById('fileSelectDialog');
+      map.controls[position].clear();
+      map.controls[position].push(div);
+  }
 
   constructor(props) {
     super(props);
@@ -33,20 +39,14 @@ class GMap extends React.Component {
 
   addFileDialogToControls = (props, map) => {
     this.map = map;
-
-    var position = this.props.google.maps.ControlPosition.BOTTOM_CENTER
+    var position = this.props.google.maps.ControlPosition.BOTTOM_CENTER;
     if (map.controls[position].length == 0) { 
-      console.log('madeit')
-      var div = document.getElementById('fileSelectDialog')
-      //var oldControls = controls
-      map.controls[position].clear();
-      map.controls[position].push(div)
+      this.mapReady(map, position);
     }//if
     //window.setTimeOut(function() { //Start the timer
-    var i = 0;
+    //var i = 0;
     //for ( i = 0; i < 9000000; i++) {;}
-    
-    this.setState({mapReady: true});
+    //this.props.setTimeout(this.mapReady, 500);
         //this.setState({render: true}) //After 1 second, set render to true
     //}.bind(this), 1000)
   }
@@ -85,8 +85,9 @@ class GMap extends React.Component {
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
-		{trackerJsx}
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
+		{trackerJsx}
+
 	  </Map>
         </div>  
 
@@ -111,6 +112,6 @@ GMap.propTypes = {
 //export default GMap;
 export default GoogleApiWrapper({
   apiKey: (config.googleMapsApiKey)//("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
-})(GMap)
+})(ReactTimeout(GMap))
 
 
