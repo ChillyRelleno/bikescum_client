@@ -8,7 +8,7 @@ import styles from './GMap.css';
 import config from './config.js';
 import TrackerComponent from './TrackerComponent.jsx';
 //import PositionComponent from './PositionComponent.jsx';
-import ReactTimeout from 'react-timeout'
+//import ReactTimeout from 'react-timeout'
 
 class GMap extends React.Component {
   static propTypes = {
@@ -25,7 +25,8 @@ class GMap extends React.Component {
     hasData: false
   };
   mapReady = (map, position) => { 
-    this.props.setTimeout(()=>{ this.setState({mapReady: true}); },1000);
+    //this.props.setTimeout(()=>{ 
+    this.setState({mapReady: true});// },1000);
     var div = document.getElementById('fileSelectDialog');
       map.controls[position].clear();
       map.controls[position].push(div);
@@ -112,6 +113,6 @@ GMap.propTypes = {
 //export default GMap;
 export default GoogleApiWrapper({
   apiKey: (config.googleMapsApiKey)//("AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c")
-})(ReactTimeout(GMap))
+})(GMap)
 
 

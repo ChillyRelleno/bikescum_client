@@ -17,7 +17,9 @@ class TrackerComponent extends React.Component {
     //TODO edit gpx.js to make sure duplicate event listeners arent added
     if (!this.GPX)  this.GPX = new GPX(this.props.map, this.props.google);
 
-
+    this.json = null;
+    this.markers = null;
+    this.svgUrl = "http://phillipdaw.com:" + config.serverPort + "/circle.svg";
     var positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
 	"/track";
     var user = "";
@@ -27,10 +29,27 @@ class TrackerComponent extends React.Component {
     var url = positionDataUrl + "/" + user;
     console.log(url);
     this.getPositionData(url);
-    //var fd=document.getElementById("fileSelectDialog");
-    //fd.style.display = "none";
   }//constructor
 
+  getSvg (url) {
+    fetch(url)
+	.then(response => response.text())
+	.then(svg => this.updateMarkerIcons(svg))//document.body.insertAdjacentHTML("afterbegin", svg));
+        //.then(response => this.updateMarkerIcons(response.body))
+    //this.updateMarkerIcons(url);
+  }
+  updateMarkerIcons(svg) {
+    //var parser = new DOMParser();
+    //var doc = parser.parseFromString(svg, "image/svg+xml");
+    svg = 'data:image/svg+xml;utf-8, ' + svg;
+    this.markers.forEach((feature) => {
+	//marker.setIcon(svg);
+        this.props.map.data.overrideStyle(feature, {icon: {url: svg}});
+
+		//{path:this.props.google.maps.SymbolPath.CIRCLE,//doc,	scale: 20}
+	//});// svg});//url});
+    });
+  }
   componentDidMount() {
     var fd=document.getElementById("fileSelectDialog");
     fd.style.display = "none";
@@ -39,8 +58,8 @@ class TrackerComponent extends React.Component {
 
   render() {
     //var toDisplay = ( <div> {this.state.track} </div> )
-    var toDisplay = this.state.track
-    console.log(toDisplay);
+    //var toDisplay = this.state.track
+    //console.log(toDisplay);
 //    if (toDisplay !== null)
 //	return  (<React.Fragment> {toDisplay} </React.Fragment>);
      return null;
@@ -68,7 +87,12 @@ class TrackerComponent extends React.Component {
 //    },this);
 //    console.log(subComponents);
 //    this.setState( {track: subComponents });
-  this.props.map.data.addGeoJson(json);  
+
+  this.json = json;
+  this.markers =  this.props.map.data.addGeoJson(json);  
+  this.getSvg(this.svgUrl);
+
+  //console.log(this.markers);
   //NEED TO EDIT GPX.JS SO THAT IT CAN BE INCLUDED IN TWO FILES WITHOUT
     //console.log(json);
   }
