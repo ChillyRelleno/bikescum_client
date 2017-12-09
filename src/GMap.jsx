@@ -28,9 +28,12 @@ class GMap extends React.Component {
   constructor(props) {
     super(props);
     this.center = props.center;    
+    this.state = {mapReady: false };
   }//constructor
 
   addFileDialogToControls = (props, map) => {
+    this.map = map;
+
     var position = this.props.google.maps.ControlPosition.BOTTOM_CENTER
     if (map.controls[position].length == 0) { 
       console.log('madeit')
@@ -39,11 +42,26 @@ class GMap extends React.Component {
       map.controls[position].clear();
       map.controls[position].push(div)
     }//if
+    //window.setTimeOut(function() { //Start the timer
+    var i = 0;
+    //for ( i = 0; i < 9000000; i++) {;}
+    
+    this.setState({mapReady: true});
+        //this.setState({render: true}) //After 1 second, set render to true
+    //}.bind(this), 1000)
   }
 
+  componentDidMount() { 
+	document.title = "Ride On Fire!";
+	//this.setState({mapReady: true});
+ }
+  //componentWillReceiveProps(next, old) {
+//	if (next.mapReady == "true")
+//		this.setState({mapReady: true});
+  //}
+  componentDidUpdate() { 
 
-  componentDidMount() { document.title = "Ride On Fire!" }
-  componentDidUpdate() { }
+  }
  
 //          <div id="legend" style={legendStyle}> </div>
 
@@ -56,18 +74,25 @@ class GMap extends React.Component {
 			padding: '0', margin: '0'};
     var mapContainerStyle = { position: 'relative', height: '100%', width: '100%',
 			padding: '0', margin: '0'};
-
+    var trackerJsx = null;
+    if (this.state.mapReady == true) 
+	trackerJsx = (
+            <Route path='/track/:user'
+                render={(props) => <TrackerComponent {...props} google={this.props.google}
+                                        map={this.map} />} />
+	);
     return (
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
-	    <Route path='/track/:user' component={TrackerComponent} />
+		{trackerJsx}
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
         </div>  
 
     );
   };
+//		component={TrackerComponent} />
 //          <div id="legend" className="mapControls lowMargin"> </div>
 //<Map ... onReady={this.addFileDialogToControls}>
 
@@ -79,8 +104,8 @@ class GMap extends React.Component {
 }//class
 
 GMap.propTypes = {
- title: React.PropTypes.string,
- map_id: React.PropTypes.string
+ title: PropTypes.string,
+ map_id: PropTypes.string
 };
 
 //export default GMap;

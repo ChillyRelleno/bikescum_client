@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, {Fragment, Component } from 'react';
 //import FileReaderInput from 'react-file-reader-input';
 //import GPXParser from './loadgpx.js';
 //import GMap from './GMap.jsx';
-//import PositionComponent from './PositionComponent.jsx';
+import PositionComponent from './PositionComponent.jsx';
 import geobufFun from './lib/geobufFun.js'
 import config from './config.js';
 
@@ -11,7 +11,7 @@ class TrackerComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    //this.state = {isFileSelected : false,  gpx : null};
+    this.state = {track : null};
 
     var positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
 	"/track";
@@ -33,7 +33,12 @@ class TrackerComponent extends React.Component {
 
 
   render() {
-    return (<div id="gotThere"/>);//null;
+    //var toDisplay = ( <div> {this.state.track} </div> )
+    var toDisplay = this.state.track
+    console.log(toDisplay);
+    if (toDisplay !== null)
+	return  (<React.Fragment> {toDisplay} </React.Fragment>);
+    else return null;
   }
 
   getPositionData (url) {
@@ -44,7 +49,23 @@ class TrackerComponent extends React.Component {
   }
 
   usePositionData (json) {
-    console.log(json);
+    //Setup Updates
+
+    //Create jsx
+    var subComponents = json.features.map(function(pos, index) {
+      return <PositionComponent lat={pos.geometry.coordinates[0]}
+              lng={pos.geometry.coordinates[1]}
+              time={pos.properties.time} 
+	      key={index}
+	      google={this.props.google}
+	      map={this.props.map}
+	    />
+    },this);
+//    console.log(subComponents);
+    this.setState( {track: subComponents });
+    
+
+    //console.log(json);
   }
 //-------- Component Events --------//
   //componentWillMount() {}

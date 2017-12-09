@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 //import FileReaderInput from 'react-file-reader-input';
 //import GPXParser from './loadgpx.js';
 //import GMap from './GMap.jsx';
+import { Marker } from 'google-maps-react';
 
 class PositionComponent extends React.Component {
 
@@ -11,7 +12,13 @@ class PositionComponent extends React.Component {
   }//constructor
 
   render() {
-    return null;
+    var pos = {lat: this.props.lat, lng: this.props.lng};
+    return (<Marker name={this.props.time}
+	      position={ pos } 
+	      google={this.props.google}
+		map={this.props.map}
+		/> );
+    //return null;
   }
 
 
@@ -26,6 +33,6 @@ class PositionComponent extends React.Component {
   //componentDidCatch() {}
 
 
-}//AqiComponent
+}//PositionComponent
 
 export default PositionComponent;
