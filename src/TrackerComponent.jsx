@@ -8,17 +8,29 @@ import config from './config.js';
 
 class TrackerComponent extends React.Component {
   //user = "";
-  //positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
-//	"/track";
+
   constructor(props) {
     super(props);
     //this.state = {isFileSelected : false,  gpx : null};
 
-    this.user = props.match.params.user;
-    this.positionDataUrl = this.positionDataUrl + "/" + user;
-    this.getPositionData(positionDataUrl);
-//    var fd=document.getElementById("fileSelectDialog");
+    var positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
+	"/track";
+    var user = "";
+
+    user = props.match.params.user;
+    //console.log(this.user);
+    var url = positionDataUrl + "/" + user;
+    console.log(url);
+    this.getPositionData(url);
+    //var fd=document.getElementById("fileSelectDialog");
+    //fd.style.display = "none";
   }//constructor
+
+  componentDidMount() {
+    var fd=document.getElementById("fileSelectDialog");
+    fd.style.display = "none";
+  }
+
 
   render() {
     return (<div id="gotThere"/>);//null;
@@ -28,7 +40,7 @@ class TrackerComponent extends React.Component {
     fetch(url)
 	.then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
-	.then(json => this.preparePositionData(json))
+	.then(json => this.usePositionData(json))
   }
 
   usePositionData (json) {
@@ -36,7 +48,6 @@ class TrackerComponent extends React.Component {
   }
 //-------- Component Events --------//
   //componentWillMount() {}
-  //componentDidMount() {}
   //componentWillReceiveProps() {}
   //shouldComponentUpdate() {}
   //componentWillUpdate() {}
