@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import { Route, Switch } from 'react-router-dom';
+import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react';
 import PropTypes from 'prop-types';
 import GpxFileComponent from './GpxFileComponent.jsx';
 import styles from './GMap.css';
 import config from './config.js';
+import TrackerComponent from './TrackerComponent.jsx';
+//import PositionComponent from './PositionComponent.jsx';
 
 class GMap extends React.Component {
   static propTypes = {
@@ -58,6 +61,7 @@ class GMap extends React.Component {
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
+	    <Route path='/track/:user' component={TrackerComponent} />
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	  </Map>
         </div>  
