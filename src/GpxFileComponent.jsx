@@ -54,10 +54,8 @@ class GpxFileComponent extends React.Component {
 
     var fileBoundingBox = data.fileBoundingBox;
     this.legend = data.legend;
+    this.addFileDialogToControls();
     this.setState({ isFileSelected: true, boundingBox: fileBoundingBox});
-  this.addFileDialogToControls();
-
-
   }
 
   loadGPXUrlIntoGoogleMap = ( url) => {
@@ -72,9 +70,6 @@ class GpxFileComponent extends React.Component {
         .then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
         .then(geojson => this.draw(geojson));
-
-    //var json = geobufToGeojson(geobuf);
-    //this.draw(json);
   }//loadGeobufTrack
 
 
@@ -141,10 +136,10 @@ class GpxFileComponent extends React.Component {
                       </form>
 	);
 
-
     if (this.state.isFileSelected == true) {
         selectFile = null;
 	toDisplay = ( <div>
+		      {fileDialog}
 		      <AqiComponent boundingBox = {this.state.boundingBox}
 			google = {this.props.google}
 			map = {this.props.map}
@@ -155,7 +150,6 @@ class GpxFileComponent extends React.Component {
 			map = {this.props.map} 
 			addToLegend={this.addToLegend}
 			useFireSeasonData = {this.state.useFireSeasonData}/>
-		      {fileDialog}
 		</div>
 			);
     }

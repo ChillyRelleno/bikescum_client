@@ -9,14 +9,14 @@ class GPX {
   constructor (map, google) {
     //super();
     this.boundaryLine = null;
-    this.legendDiv = document.createElement('div');
-    this.legendDiv.innerHTML = "<h3>Legend</h3>";
+    //this.legendDiv = document.createElement('div');
+    //this.legendDiv.innerHTML = "<h3>Legend</h3>";
     this.map = map;
     this.google = google;
      //Set up event so features can color themselves
-      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+      //this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      this.addListeners();
+      //this.addListeners();
   }//constructor
 
   drawGpx = (json) => { //xml) => {
@@ -28,9 +28,9 @@ class GPX {
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 
       //Set up event so features can color themselves
-    //  this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      //this.addListeners();
+      this.addListeners();
 
       //prepare for draw, change state
       this.Boundary = new Boundary(this.map, this.google);
@@ -84,7 +84,7 @@ class GPX {
       this.map.data.overrideStyle(event.feature,
              { strokeWeight: 3 });
    });//mouseout event
-
+   
   }//adListeners
 
 
@@ -106,6 +106,11 @@ class GPX {
     }//else if fire
     else if (event.feature.getProperty('time') !== undefined) {
 	message = event.feature.getProperty('time');
+	svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">' +
+	'<circle cx="9" cy="9" r="8" data-name="outer" fill="#7EC0EE" stroke="#000" stroke-width="1"/>'+
+	'<circle cx="9" cy="9" r="3" data-name="inner" fill="#fff" stroke="#000" stroke-width="1.5" fill-opacity="0.55"/>'+
+	'</svg>';
+
     }
     else {//GPX
       console.log(event.feature);
