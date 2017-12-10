@@ -14,23 +14,23 @@ class GPX {
     this.map = map;
     this.google = google;
      //Set up event so features can color themselves
-      //this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      //this.addListeners();
+      this.addListeners();
   }//constructor
 
-  drawGpx = (json) => { //xml) => {
+  drawGpx = (json, clear = true) => { //xml) => {
     if (json !== null) {
       //Clear map
-      this.clearMap();
+      if (clear)      this.clearMap();
       if (this.infoWindow) this.infoWindow.close();
       //Setup parser
       var fileBoundingBox = GeoBounds.extent(json); //parser.centerAndZoom(xml);
 
       //Set up event so features can color themselves
-      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+      //this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
 
-      this.addListeners();
+      //this.addListeners();
 
       //prepare for draw, change state
       this.Boundary = new Boundary(this.map, this.google);

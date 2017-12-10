@@ -20,6 +20,8 @@ class TrackerComponent extends React.Component {
     this.json = null;
     this.markers = null;
     this.svgUrl = "http://phillipdaw.com:" + config.serverPort + "/circle.svg";
+    this.routeUrl = "http://phillipdaw.com:" + config.serverPort + "/route/gpx";
+
     var positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
 	"/track";
     var user = "";
@@ -44,6 +46,7 @@ class TrackerComponent extends React.Component {
     svg = 'data:image/svg+xml;utf-8, ' + svg;
     this.markers.forEach((feature) => {
 	//marker.setIcon(svg);
+        
         this.props.map.data.overrideStyle(feature, {icon: {url: svg}});
 
 		//{path:this.props.google.maps.SymbolPath.CIRCLE,//doc,	scale: 20}
@@ -65,37 +68,33 @@ class TrackerComponent extends React.Component {
      return null;
   }
 
+  usePositionData (json) {
+    this.json = json;
+    this.markers =  this.props.map.data.addGeoJson(json);  
+    this.getSvg(this.svgUrl);
+    this.getRouteData(this.routeUrl);
+    //console.log(this.markers);
+    //NEED TO EDIT GPX.JS SO THAT IT CAN BE INCLUDED IN TWO FILES WITHOUT
+    //console.log(json);
+  }
   getPositionData (url) {
     fetch(url)
 	.then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
 	.then(json => this.usePositionData(json))
   }
-
-  usePositionData (json) {
-    //Setup Updates
-
-    //Create jsx
-    //var subComponents = json.features.map(function(pos, index) {
-    //  return <PositionComponent lat={pos.geometry.coordinates[0]}
-    //          lng={pos.geometry.coordinates[1]}
-    //          time={pos.properties.time} 
-//	      key={index}
-//	      google={this.props.google}
-//	      map={this.props.map}
-//	    />
-//    },this);
-//    console.log(subComponents);
-//    this.setState( {track: subComponents });
-
-  this.json = json;
-  this.markers =  this.props.map.data.addGeoJson(json);  
-  this.getSvg(this.svgUrl);
-
-  //console.log(this.markers);
-  //NEED TO EDIT GPX.JS SO THAT IT CAN BE INCLUDED IN TWO FILES WITHOUT
-    //console.log(json);
+  getRouteData (url) {
+    fetch (url)
+	.then(response => response.arrayBuffer())
+        .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
+	.then(json => this.useRouteData(json))
   }
+  useRouteData(json) {
+	console.log(json);
+	//this.props.data.addGeoJson(json);
+	this.GPX.drawGpx(json, false);
+  }
+
 //-------- Component Events --------//
   //componentWillMount() {}
   //componentWillReceiveProps() {}
