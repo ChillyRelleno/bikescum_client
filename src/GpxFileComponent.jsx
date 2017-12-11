@@ -91,7 +91,7 @@ class GpxFileComponent extends React.Component {
 
   useTestData = function(e) {
     console.log('using test data from server');
-    this.loadGeobufTrackIntoGoogleMap("http://phillipdaw.com:" + config.serverPort +
+    this.loadGeobufTrackIntoGoogleMap(config.fireAqiServerUrl + ":"  + config.fireAqiServerPort +
 	"/getTestRoute");
   }
 

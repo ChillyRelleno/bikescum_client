@@ -21,7 +21,7 @@ class AqiComponent extends React.Component {
     padding: 0.5,
     apiKey: "8B8927D2-B8C3-4371-8E5D-902C4A129469",
     date: new Date(),
-    url: "http://phillipdaw.com:" + config.serverPort + "/testAqi.kml",
+    url: config.fireAqiServerUrl + ":" + config.fireAqiServerPort + "/testAqi.kml",
     addToLegend: null
   };
 
@@ -58,10 +58,10 @@ class AqiComponent extends React.Component {
 
     var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
     //use test kml for development to avoid query limits
-    var testurl = "http://phillipdaw.com:" + config.serverPort + 
+    var testurl = config.fireAqiServerUrl + ":" + config.fireAqiServerPort + 
 			"/filter/" + fireSeason + "aqi/" + west + "/" +
 			south + "/" + east + "/" + north
-    //PreFiltered by bounds data at'http://phillipdaw.com:' + config.serverPort + '/testAqi.kml';
+    //PreFiltered by bounds data at'http://phillipdaw.com:' + config.fireAqiServerPort + '/testAqi.kml';
     fetch(testurl)
         .then(response => response.arrayBuffer())
 	.then(arrbuf => this.geobufToGeojson(arrbuf) )

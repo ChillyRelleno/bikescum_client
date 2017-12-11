@@ -19,10 +19,10 @@ class TrackerComponent extends React.Component {
 
     this.json = null;
     this.markers = null;
-    this.svgUrl = "http://phillipdaw.com:" + config.serverPort + "/circle.svg";
-    this.routeUrl = "http://phillipdaw.com:" + config.serverPort + "/route/gpx";
+    this.svgUrl = config.trackerServerUrl + ":" + config.trackerServerPort + "/circle.svg";
+    this.routeUrl = config.trackerServerUrl + ":" + config.trackerServerPort + "/route/gpx";
 
-    var positionDataUrl = "http://phillipdaw.com:" + config.serverPort +
+    var positionDataUrl = "http://phillipdaw.com:" + config.trackerServerPort +
 	"/track";
     var user = "";
 

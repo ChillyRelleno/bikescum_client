@@ -19,7 +19,7 @@ class FirePerimeterComponent extends React.Component {
     boundingBox: null,
     padding: 0.5,
     date: new Date(),
-    url: 'http://phillipdaw.com:" + config.serverPort + "/testFirePerimeters.kml',
+    url: config.fireAqiServerUrl +":" + config.fireAqiServerPort + "/testFirePerimeters.kml",
     addToLegend: null
   };
 
@@ -49,7 +49,7 @@ class FirePerimeterComponent extends React.Component {
         north = this.boundingBox[3] + this.props.padding;
 
     var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
-    var url = "http://phillipdaw.com:" + config.serverPort + "/filter/" + fireSeason + 
+    var url = config.fireAqiServerUrl+ ":" + config.fireAqiServerPort + "/filter/" + fireSeason + 
 	"fire/" + 
 		west + "/" + south + "/" + east + "/" + north;
 		//southwest.lng().toFixed(4) + "/" + southwest.lat().toFixed(4) + 
