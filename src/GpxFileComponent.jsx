@@ -12,6 +12,7 @@ import geobufFun from './lib/geobufFun.js';
 import Legend from './lib/legend.js';
 import Boundary from './lib/boundary.js';
 import GPX from './lib/gpx.js';
+import { Link } from 'react-router-dom';
 const util = require('util')
 
 
@@ -133,6 +134,7 @@ class GpxFileComponent extends React.Component {
 				style={{padding:"0px"}}
 				checked = {this.state.useFireSeasonData}
 			/>
+			<Link to='/track/phil'>Ride Tracker</Link>
                       </form>
 	);
 
