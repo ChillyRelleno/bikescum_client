@@ -4,10 +4,14 @@ import { AppContainer } from 'react-hot-loader'
 import App from './app'
 import { BrowserRouter } from 'react-router-dom';
 
+//<!--basename='/rideonfire'-->
+//      <!--Unlikely thus untested-->
+//      <!--Route path='/rideonfire'-->
+//      <!--/Route-->
 ReactDOM.render(
   <AppContainer>
-    <BrowserRouter basename='/rideonfire'>
-      <App/>
+    <BrowserRouter basename={'/rideonfire'}>
+        <App/>
     </BrowserRouter>
   </AppContainer>,
   document.getElementById('app')

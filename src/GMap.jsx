@@ -78,7 +78,7 @@ class GMap extends React.Component {
     var trackerJsx = null;
     if (this.state.mapReady == true) 
 	trackerJsx = (
-            <Route path='track/:user'
+            <Route path='/track/:user'
                 render={(props) => <TrackerComponent {...props} google={this.props.google}
                                         map={this.map} />} />
 	);
