@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
   <AppContainer>
-    <BrowserRouter>
+    <BrowserRouter basename='/rideonfire'>
       <App/>
     </BrowserRouter>
   </AppContainer>,
