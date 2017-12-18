@@ -15,12 +15,12 @@ export default class App extends React.Component {
   componentDidMount() {
     
   }
+//      <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
+//        async ></script-->
 
   render() {
     return (
      <div>
-      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIzV5zhdi5cuH6Qvd5w2k_ddsnKLuts_c"
-        async ></script>
 
         <GMap 
            style={{height:"400px", width:"400px", margin:"0", padding:"0"}} 

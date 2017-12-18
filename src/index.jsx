@@ -1,5 +1,6 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+//import ReactDOM from 'react-dom'
+import {render} from 'react-snapshot';
 import { AppContainer } from 'react-hot-loader'
 import App from './app'
 import { BrowserRouter } from 'react-router-dom';
@@ -9,7 +10,8 @@ import { BrowserRouter } from 'react-router-dom';
 //      <!--Route path='/rideonfire'-->
 //      <!--/Route-->
 
-ReactDOM.render(
+//ReactDOM.render(
+render(
   <AppContainer>
     <BrowserRouter basename={'/rideonfire'}>
         <App>
@@ -23,13 +25,13 @@ ReactDOM.render(
 if (module.hot) {
   module.hot.accept('./app', () => {
     const NextApp = require('./app').default;
-    ReactDOM.render(
-  <AppContainer>
-    <BrowserRouter basename={'/rideonfire'}>
-        <App>
-	</App>
-    </BrowserRouter>
-  </AppContainer>,
+    //ReactDOM.render(
+    render (
+      <AppContainer>
+        <BrowserRouter basename={'/rideonfire'}>
+            <App></App>
+        </BrowserRouter>
+      </AppContainer>,
       document.getElementById('app')
     );
   });
