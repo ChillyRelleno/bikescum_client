@@ -134,7 +134,7 @@ class GpxFileComponent extends React.Component {
 				style={{padding:"0px"}}
 				checked = {this.state.useFireSeasonData}
 			/>
-			<Link to='/track/phil'>Ride Tracker</Link>
+			<Link to='/track/phil'></Link>
                       </form>
 	);
 
