@@ -17,7 +17,7 @@ module.exports = {
     './styles/index.scss'
   ],
   output: {
-    publicPath: '/rideonfire/',		
+    publicPath: '/rideonfire/',
     path: path.join(__dirname, 'public'),
     filename: '[chunkhash].js'
   },
@@ -42,6 +42,7 @@ module.exports = {
         drop_debugger: true
       }
     }),
+    new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new ExtractTextPlugin({
       filename: 'style.css',
