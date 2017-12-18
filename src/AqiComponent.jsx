@@ -43,24 +43,31 @@ class AqiComponent extends React.Component {
  }
 
   getAqiData() {
-    var west = this.boundingBox[0] - this.props.padding, 
+    var testurl;
+    if (this.boundingBox == "ALL") {
+	testurl = config.fireAqiServerUrl + ":" + config.fireAqiServerPort +
+		"/aqi/all"
+    }
+    else {
+      var west = this.boundingBox[0] - this.props.padding, 
 	south = this.boundingBox[1] - this.props.padding,
 	 east = this.boundingBox[2] + this.props.padding,
         north = this.boundingBox[3] + this.props.padding;
-    var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + 
-			this.props.date.getFullYear() + "-" + 
-			(this.props.date.getMonth()+1) + "-" + 
-			this.props.date.getDate() + "T06&BBOX=" +
-			west + "," + south + "," + east + "," + north +
-                  "&SRS=EPSG:4326&API_KEY=" + this.props.apiKey;
+      //var aqiapi = "http://www.airnowapi.org/aq/kml/Combined/?DATE=" + 
+	//		this.props.date.getFullYear() + "-" + 
+	//		(this.props.date.getMonth()+1) + "-" + 
+	//		this.props.date.getDate() + "T06&BBOX=" +
+	//		west + "," + south + "," + east + "," + north +
+          //        "&SRS=EPSG:4326&API_KEY=" + this.props.apiKey;
 
-    console.log(aqiapi);
+      //console.log(aqiapi);
 
-    var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
-    //use test kml for development to avoid query limits
-    var testurl = config.fireAqiServerUrl + ":" + config.fireAqiServerPort + 
+      var fireSeason = this.props.useFireSeasonData ? "fireSeason/" : "";
+      //use test kml for development to avoid query limits
+      testurl = config.fireAqiServerUrl + ":" + config.fireAqiServerPort + 
 			"/filter/" + fireSeason + "aqi/" + west + "/" +
 			south + "/" + east + "/" + north
+    }
     //PreFiltered by bounds data at'http://phillipdaw.com:' + config.fireAqiServerPort + '/testAqi.kml';
     fetch(testurl)
         .then(response => response.arrayBuffer())

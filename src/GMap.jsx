@@ -7,6 +7,10 @@ import GpxFileComponent from './GpxFileComponent.jsx';
 import styles from './GMap.css';
 import config from './config.js';
 import TrackerComponent from './TrackerComponent.jsx';
+import AqiComponent from './AqiComponent.jsx';
+import FirePerimeterComponent from './FirePerimeterComponent.jsx';
+import Legend from './lib/legend.js';
+import GPX from './lib/gpx.js';
 //import PositionComponent from './PositionComponent.jsx';
 //import ReactTimeout from 'react-timeout'
 
@@ -30,12 +34,17 @@ class GMap extends React.Component {
     var div = document.getElementById('fileSelectDialog');
       map.controls[position].clear();
       map.controls[position].push(div);
+    //LEGEND setup
+    this.legend = new Legend(this.map, this.props.google);//document.getElementById('legend');
+    this.legend.clearLegend();
+    this.GPX = new GPX(this.map, this.props.google);
   }
 
   constructor(props) {
     super(props);
     this.center = props.center;    
-    this.state = {mapReady: false };
+    this.state = {mapReady: false, legend: new Array() };
+
   }//constructor
 
   addFileDialogToControls = (props, map) => {
@@ -44,12 +53,6 @@ class GMap extends React.Component {
     if (map.controls[position].length == 0) { 
       this.mapReady(map, position);
     }//if
-    //window.setTimeOut(function() { //Start the timer
-    //var i = 0;
-    //for ( i = 0; i < 9000000; i++) {;}
-    //this.props.setTimeout(this.mapReady, 500);
-        //this.setState({render: true}) //After 1 second, set render to true
-    //}.bind(this), 1000)
   }
 
   componentDidMount() { 
@@ -57,15 +60,21 @@ class GMap extends React.Component {
 	//this.setState({mapReady: true});
  }
   //componentWillReceiveProps(next, old) {
-//	if (next.mapReady == "true")
-//		this.setState({mapReady: true});
+  //	if (next.mapReady == "true")
+  //		this.setState({mapReady: true});
   //}
   componentDidUpdate() { 
 
   }
+  //This callback is needed to facilitate communication between children
+  addToLegend = (name, color) => {
+        this.legend.addToLegend(name, color);
+  }//addToLegend
+  //This callback is needed to facilitate communication between children
+  addAqiToLegend = (name, legendLiteral) => {
+    this.legend.addAqiToLegend(name, legendLiteral);
+  }//addAqiToLegend
  
-//          <div id="legend" style={legendStyle}> </div>
-
   render() {
     var floatStyle = {
         position: 'fixed', float: 'right'
@@ -75,20 +84,34 @@ class GMap extends React.Component {
 			padding: '0', margin: '0'};
     var mapContainerStyle = { position: 'relative', height: '100%', width: '100%',
 			padding: '0', margin: '0'};
-    var trackerJsx = null;
-    if (this.state.mapReady == true) 
+    var trackerJsx = null, allPerimeters=null;
+    if (this.state.mapReady == true) {
 	trackerJsx = (
             <Route path='/track/:user'
                 render={(props) => <TrackerComponent {...props} google={this.props.google}
                                         map={this.map} />} />
 	);
+	allPerimeters = (
+	  <Route path='/fireMap' render = { (props) =>
+		<div>
+		  <FirePerimeterComponent {...props} boundingBox="ALL"
+			google = {this.props.google}
+                        map = {this.map}
+                        addToLegend={this.addToLegend}/>
+                  <AqiComponent {...props} boundingBox="ALL"
+                        google = {this.props.google}
+                        map = {this.map}
+                        addToLegend={this.addAqiToLegend}/>
+		</div> }/>
+	);
+    }
     return (
         <div id="mapContainer" >
 	  <Map google={this.props.google} zoom={8} style={mapStyle}
 	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
-		{trackerJsx}
-
+	    {trackerJsx}
+	    {allPerimeters}
 	  </Map>
         </div>  
 
