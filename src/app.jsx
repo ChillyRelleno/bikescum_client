@@ -3,6 +3,7 @@ import '../styles/index.scss';
 import GMap from './GMap.jsx';
 
 export default class App extends React.Component {
+
   constructor(props) {
     super();
   }

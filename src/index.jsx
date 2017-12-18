@@ -8,10 +8,12 @@ import { BrowserRouter } from 'react-router-dom';
 //      <!--Unlikely thus untested-->
 //      <!--Route path='/rideonfire'-->
 //      <!--/Route-->
+
 ReactDOM.render(
   <AppContainer>
     <BrowserRouter basename={'/rideonfire'}>
-        <App/>
+        <App>
+	</App>
     </BrowserRouter>
   </AppContainer>,
   document.getElementById('app')
@@ -22,9 +24,12 @@ if (module.hot) {
   module.hot.accept('./app', () => {
     const NextApp = require('./app').default;
     ReactDOM.render(
-      <AppContainer>
-        <NextApp/>
-      </AppContainer>,
+  <AppContainer>
+    <BrowserRouter basename={'/rideonfire'}>
+        <App>
+	</App>
+    </BrowserRouter>
+  </AppContainer>,
       document.getElementById('app')
     );
   });
