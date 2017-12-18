@@ -4,7 +4,8 @@ var loaders = require('./webpack.loaders');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+ 
 loaders.push({
   test: /\.scss$/,
   loader: ExtractTextPlugin.extract({fallback: 'style-loader', use : 'css-loader?sourceMap&localIdentName=[local]___[hash:base64:5]!sass-loader?outputStyle=expanded'}),
@@ -28,6 +29,7 @@ module.exports = {
     loaders
   },
   plugins: [
+    new BundleAnalyzerPlugin({analyzerPort: 4444, analyzerHost: '108.161.135.106'}),
     new WebpackCleanupPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
