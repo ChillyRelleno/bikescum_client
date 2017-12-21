@@ -28,10 +28,26 @@ class TrackerComponent extends React.Component {
 
     user = props.match.params.user;
     //console.log(this.user);
-    var url = positionDataUrl + "/" + user;
-    console.log(url);
-    this.getPositionData(url);
+    this.url = positionDataUrl + "/" + user;
+    //console.log(url);
+    this.getPositionData(this.url);
   }//constructor
+
+  getPositionLoop = (url) => {
+    var interval = 10000;
+    //var length = testRide.features.length
+    //if (length > 1) {
+	//if testRide.features[testRide.features[length-1].updated {
+        //var recentDate = new Date(testRide[length-1].properties.time)
+	//var prevDate = new Date(testRide[length-2].properties.time)
+	//interval = //recentDate-prevDate;
+    //}
+    this.timer = setInterval( ()=> { 
+	  console.log('updating');
+	  this.GPX.clearMap();
+	  this.getPositionData(url); 
+	}, interval);
+  }
 
   getSvg (url) {
     fetch(url)
@@ -59,6 +75,7 @@ class TrackerComponent extends React.Component {
   componentDidMount() {
     var fd=document.getElementById("fileSelectDialog");
     fd.style.display = "none";
+    this.getPositionLoop(this.url)
   }
 
 
