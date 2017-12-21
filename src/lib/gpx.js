@@ -18,7 +18,9 @@ class GPX {
 
       this.addListeners();
   }//constructor
-
+  calcBounds = (feature) => {
+    return GeoBounds.extent(feature);
+  }
   drawGpx = (json, clear = true) => { //xml) => {
     if (json !== null) {
       //Clear map
@@ -104,7 +106,7 @@ class GPX {
       svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
             '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
     }//else if fire
-    else if (event.feature.getProperty('time') !== undefined) {
+    else if (event.feature.getProperty('type') == "pos") {//time') !== undefined) {
 	message = event.feature.getProperty('time');
 	svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">' +
 	'<circle cx="9" cy="9" r="8" data-name="outer" fill="#7EC0EE" stroke="#000" stroke-width="1"/>'+
@@ -153,6 +155,9 @@ class GPX {
         zIndex += Number(String(feature.getProperty('styleUrl')).charAt(1)) * increment;
         style['zIndex'] = zIndex;
     }//AQI
+    else if (type=="pos") {
+	style['zIndex'] = 300;
+    }
     else style['zIndex'] = 50;
     this.map.data.overrideStyle(feature, style  );
 

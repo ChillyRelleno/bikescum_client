@@ -29,7 +29,7 @@ module.exports = {
     loaders
   },
   plugins: [
-    new BundleAnalyzerPlugin({analyzerPort: 4444, analyzerHost: '108.161.135.106'}),
+//    new BundleAnalyzerPlugin({analyzerPort: 4444, analyzerHost: '108.161.135.106'}),
     new WebpackCleanupPlugin(),
     new webpack.DefinePlugin({
       'process.env': {

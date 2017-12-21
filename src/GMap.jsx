@@ -109,7 +109,8 @@ class GMap extends React.Component {
     return (
         <div id="mapContainer" >
 	  <Map google={window.google} zoom={8} style={mapStyle}
-	      initialCenter={this.props.center} onReady={this.addFileDialogToControls}>
+	      defaultCenter={this.props.center} initialCenter={this.props.center} 
+		onReady={this.addFileDialogToControls}>
             <GpxFileComponent as="text" id="gpx-file-input" style={floatStyle} />
 	    {trackerJsx}
 	    {allPerimeters}

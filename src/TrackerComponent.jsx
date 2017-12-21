@@ -40,14 +40,17 @@ class TrackerComponent extends React.Component {
         //.then(response => this.updateMarkerIcons(response.body))
     //this.updateMarkerIcons(url);
   }
-  updateMarkerIcons(svg) {
+  updateMarkerIcons = (svg) => {
     //var parser = new DOMParser();
     //var doc = parser.parseFromString(svg, "image/svg+xml");
     svg = 'data:image/svg+xml;utf-8, ' + svg;
     this.markers.forEach((feature) => {
 	//marker.setIcon(svg);
-        
-        this.props.map.data.overrideStyle(feature, {icon: {url: svg}});
+        var tempSvg = svg.replace('opacity="1.00"', 'opacity="'+feature.getProperty('opacity')+'"')
+	
+        this.props.map.data.overrideStyle(feature, 
+		{icon: {url: tempSvg}});
+		//, fillOpacity: feature.getProperty('opacity')});
 
 		//{path:this.props.google.maps.SymbolPath.CIRCLE,//doc,	scale: 20}
 	//});// svg});//url});
@@ -60,11 +63,6 @@ class TrackerComponent extends React.Component {
 
 
   render() {
-    //var toDisplay = ( <div> {this.state.track} </div> )
-    //var toDisplay = this.state.track
-    //console.log(toDisplay);
-//    if (toDisplay !== null)
-//	return  (<React.Fragment> {toDisplay} </React.Fragment>);
      return null;
   }
 
@@ -73,9 +71,16 @@ class TrackerComponent extends React.Component {
     this.markers =  this.props.map.data.addGeoJson(json);  
     this.getSvg(this.svgUrl);
     this.getRouteData(this.routeUrl);
-    //console.log(this.markers);
-    //NEED TO EDIT GPX.JS SO THAT IT CAN BE INCLUDED IN TWO FILES WITHOUT
-    //console.log(json);
+    var bounds = this.GPX.calcBounds(json.features[json.features.length-1])
+    //console.log("bounds " + bounds)
+    //CENTER MAP
+      var latlngBounds = new this.props.google.maps.LatLngBounds();
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:bounds[0], lat:bounds[1] }));
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:bounds[2], lat:bounds[3]}));
+      if (this.markers)
+	      this.props.map.fitBounds(latlngBounds);
   }
   getPositionData (url) {
     fetch(url)
