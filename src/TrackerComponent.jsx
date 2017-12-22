@@ -34,7 +34,7 @@ class TrackerComponent extends React.Component {
   }//constructor
 
   getPositionLoop = (url) => {
-    var interval = 10000;
+    var interval = 30000;
     //var length = testRide.features.length
     //if (length > 1) {
 	//if testRide.features[testRide.features[length-1].updated {
@@ -50,19 +50,22 @@ class TrackerComponent extends React.Component {
   }
 
   getSvg (url) {
+   if (!this.svg) {
     fetch(url)
 	.then(response => response.text())
 	.then(svg => this.updateMarkerIcons(svg))//document.body.insertAdjacentHTML("afterbegin", svg));
         //.then(response => this.updateMarkerIcons(response.body))
     //this.updateMarkerIcons(url);
+   }
+   else { this.updateMarkerIcons(this.svg); }
   }
   updateMarkerIcons = (svg) => {
     //var parser = new DOMParser();
     //var doc = parser.parseFromString(svg, "image/svg+xml");
-    svg = 'data:image/svg+xml;utf-8, ' + svg;
+    if (!this.svg) { this.svg = 'data:image/svg+xml;utf-8, ' + svg; }
     this.markers.forEach((feature) => {
 	//marker.setIcon(svg);
-        var tempSvg = svg.replace('opacity="1.00"', 'opacity="'+feature.getProperty('opacity')+'"')
+        var tempSvg = this.svg.replace('opacity="1.00"', 'opacity="'+feature.getProperty('opacity')+'"')
 	
         this.props.map.data.overrideStyle(feature, 
 		{icon: {url: tempSvg}});
@@ -88,7 +91,7 @@ class TrackerComponent extends React.Component {
     this.markers =  this.props.map.data.addGeoJson(json);  
     this.getSvg(this.svgUrl);
     this.getRouteData(this.routeUrl);
-    var bounds = this.GPX.calcBounds(json.features[json.features.length-1])
+    var bounds = this.GPX.calcBounds({type:"FeatureCollection", features:json.features.slice(0,json.features.length-1)})
     //console.log("bounds " + bounds)
     //CENTER MAP
       var latlngBounds = new this.props.google.maps.LatLngBounds();
@@ -96,8 +99,10 @@ class TrackerComponent extends React.Component {
                                 lng:bounds[0], lat:bounds[1] }));
       latlngBounds.extend(new this.props.google.maps.LatLng({
                                 lng:bounds[2], lat:bounds[3]}));
-      if (this.markers)
-	      this.props.map.fitBounds(latlngBounds);
+      if (this.markers) {
+	this.props.map.fitBounds(latlngBounds, 200)
+	//this.props.map.setZoom(this.props.map.getZoom()*0.6)
+      }
   }
   getPositionData (url) {
     fetch(url)
