@@ -14,7 +14,8 @@ class GPX {
     this.map = map;
     this.google = google;
      //Set up event so features can color themselves
-      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this));
+      this.map.data.addListener('addfeature', this.setFeatureStyle.bind(this),
+	{passive: true});
 
       this.addListeners();
   }//constructor
@@ -68,26 +69,26 @@ class GPX {
    //MAP click
    this.map.addListener('click', (event) => {
      this.infoWindow.close();
-   });
+   }, {passive: true});
    //MAP dblclick
-   this.map.addListener('dblclick', (event) => { this.infoWindow.close(); })
-   this.map.data.addListener('dblclick', (event) =>{this.infoWindow.close();})
+   this.map.addListener('dblclick', (event) => { this.infoWindow.close(); }, {passive: true})
+   this.map.data.addListener('dblclick', (event) =>{this.infoWindow.close();}, {passive: true})
 
    //Feature click
-   this.map.data.addListener('click', this.featureClick);//feature click listener callback
+   this.map.data.addListener('click', this.featureClick, {passive: true});//feature click listener callback
 
    //feature mouseover
    this.map.data.addListener('mouseover', (event) => {
      this.map.data.overrideStyle(event.feature, { strokeWeight: 6 });
-   });//mouseover event
+   }, {passive: true});//mouseover event
 
    //Feature mouseout
    this.map.data.addListener('mouseout', (event) => {
       this.map.data.overrideStyle(event.feature,
              { strokeWeight: 3 });
-   });//mouseout event
+   }, {passive: true});//mouseout event
    
-  }//adListeners
+  }//addListeners
 
 
   featureClick = (event) => {

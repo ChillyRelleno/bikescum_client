@@ -106,18 +106,31 @@ class TrackerComponent extends React.Component {
   }
   getPositionData (url) {
     fetch(url)
+	.then(function(response) {
+	     if (typeof(response) == 'undefined') { return Promise.reject(); }
+	     if (response.message.indexOf("Unexpected end of input")!==-1)
+		{ return Promise.reject(); }
+	     } 
+	)
 	.then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
 	.then(json => this.usePositionData(json))
+	.catch(err => console.log(err))
   }
   getRouteData (url) {
-    fetch (url)
+    if (!this.route) {
+    //try {
+      fetch (url)
 	.then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
 	.then(json => this.useRouteData(json))
+	.catch(err => this.route = 0)
+     //} catch (e) {this.route = 0;}
+    }
   }
   useRouteData(json) {
 	console.log(json);
+	this.route = json;
 	//this.props.data.addGeoJson(json);
 	this.GPX.drawGpx(json, false);
   }
