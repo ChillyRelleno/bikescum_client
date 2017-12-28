@@ -11,7 +11,7 @@ import { BrowserRouter } from 'react-router-dom';
 //      <!--/Route-->
 
 //ReactDOM.render(
-var baseName = '';
+var baseName = '/';
 if (window.location.hostname.indexOf("phillipdaw.com")!= -1) {
   baseName = '/rideonfire' 
 }
