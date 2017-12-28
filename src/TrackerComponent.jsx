@@ -108,14 +108,18 @@ class TrackerComponent extends React.Component {
     fetch(url)
 	.then(function(response) {
 	     if (typeof(response) == 'undefined') { return Promise.reject(); }
-	     if (response.message.indexOf("Unexpected end of input")!==-1)
+	     else if (response.status == 204) {return Promise.reject();}
+	     else if (typeof(response.message)!== 'undefined') {
+		if (response.message.indexOf("Unexpected end of input")!==-1)
 		{ return Promise.reject(); }
+	     }//if message not undefined
+	     return response;
 	     } 
 	)
 	.then(response => response.arrayBuffer())
         .then(arrbuf => geobufFun.geobufToGeojson(arrbuf) )
 	.then(json => this.usePositionData(json))
-	.catch(err => console.log(err))
+	.catch(err => {})//console.log(err))
   }
   getRouteData (url) {
     if (!this.route) {
