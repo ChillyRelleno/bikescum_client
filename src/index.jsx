@@ -32,7 +32,7 @@ if (module.hot) {
     //ReactDOM.render(
     render (
       <AppContainer>
-        <BrowserRouter basename={'/rideonfire'}>
+        <BrowserRouter basename={baseName}>
             <App></App>
         </BrowserRouter>
       </AppContainer>,
