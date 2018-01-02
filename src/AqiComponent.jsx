@@ -79,6 +79,17 @@ class AqiComponent extends React.Component {
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name" });
     this.props.addToLegend("Air Quality PM2.5",  geojson.properties.legend);
 
+    //if (this.props.location.pathname.indexOf('fireMap') !== -1) {
+    if (this.boundingBox == "ALL") {
+      var latlngBounds = new this.props.google.maps.LatLngBounds();
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:-124.78, lat:24.74 }));
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:-66.95, lat:49.35}));
+      this.props.map.fitBounds(latlngBounds);
+    }
+	
+
     return geojson;
   }//useAqiData
 
