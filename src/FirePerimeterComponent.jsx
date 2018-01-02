@@ -71,13 +71,26 @@ class FirePerimeterComponent extends React.Component {
     //Escape HTML in description property
     var i = 0, len = geoDraw.features.length;
     //evidentally every other entry is the corresponding point for the polygon
-    //the point has the description info but the polygon needs it
+    //the point has the description info but the polygon needs it in my app
     for (i = 0; i< len; i+=2) {
-        //console.log(geoDraw.features[i].properties.description);
+	//Escape special characters FIRST
 	geoDraw.features[i+1].properties.description =
 		geoDraw.features[i].properties.description.replace(/\"/g, "");
 	geoDraw.features[i+1].properties.description =
-                geoDraw.features[i].properties.description.replace("<a href='https://www.geomac.gov' target='_blank'><img src='https://wildfire.cr.usgs.gov/geomac/images/geomac_logo_redo.png' width='144' height='42' /></a>", "")
+                geoDraw.features[i+1].properties.description.replace(
+		  "<a href='https://www.geomac.gov' target='_blank'><img src='https://wildfire.cr.usgs.gov/geomac/images/geomac_logo_redo.png' width='144' height='42' /></a>"
+		  , "");
+	//Dead Link
+	geoDraw.features[i+1].properties.description =
+                geoDraw.features[i+1].properties.description.replace(
+		  "<a href='https://www.nifc.gov/fireInfo/fireinfo_nfn.html' target='_blank'>National Fire News</a>"
+		  , "<a href='http://www.nifc.gov/fireInfo/nfn.htm' target='_blank'>National Fire News</a>");
+    
+	//Useless Link, ignores bounding box params
+	geoDraw.features[i+1].properties.description =
+                geoDraw.features[i+1].properties.description.replace(
+		  "<a href='https://www.geomac.gov/' target='_blank'>Geomac Wildland Fire Support</a><br />"
+		  , "")
     }
 
     //console.log(geoDraw);
