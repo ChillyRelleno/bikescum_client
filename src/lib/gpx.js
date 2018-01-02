@@ -103,7 +103,8 @@ class GPX {
     else if (event.feature.getProperty('type') == "Fire") {
       var name = event.feature.getProperty('name');
       var color = event.feature.getProperty('color');
-      message = " FIRE: " + name;
+      var desc = event.feature.getProperty('description')
+      message = " FIRE: " + name + "\r\n" + desc; 		console.log("D " +desc);
       svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
             '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
     }//else if fire

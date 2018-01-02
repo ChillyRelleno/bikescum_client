@@ -68,6 +68,18 @@ class FirePerimeterComponent extends React.Component {
   }//getAqiData
   
   usePerimData(geoDraw) {
+    //Escape HTML in description property
+    var i = 0, len = geoDraw.features.length;
+    //evidentally every other entry is the corresponding point for the polygon
+    //the point has the description info but the polygon needs it
+    for (i = 0; i< len; i+=2) {
+        //console.log(geoDraw.features[i].properties.description);
+	geoDraw.features[i+1].properties.description =
+		geoDraw.features[i].properties.description.replace(/\"/g, "");
+	geoDraw.features[i+1].properties.description =
+                geoDraw.features[i].properties.description.replace("<a href='https://www.geomac.gov' target='_blank'><img src='https://wildfire.cr.usgs.gov/geomac/images/geomac_logo_redo.png' width='144' height='42' /></a>", "")
+    }
+
     //console.log(geoDraw);
     this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
     this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
@@ -76,8 +88,8 @@ class FirePerimeterComponent extends React.Component {
   }//useAqiData
 
   render() {
-    if (this.state.geo !== null)
-	console.log(this.state.geo);
+    //if (this.state.geo !== null)
+	//console.log(this.state.geo);
     return null;
   }//render
 
