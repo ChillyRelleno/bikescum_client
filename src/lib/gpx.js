@@ -96,7 +96,7 @@ class GPX {
     if (event.feature.getProperty('type') == "AQI") {
       var lvl = event.feature.getProperty('styleUrl').charAt(1)
       var color = event.feature.getProperty('color');
-      message = " Air particulate warning level " + lvl;
+      message = " PM2.5 Air particulate warning level " + lvl;
       svg = '<svg width="40" height="15" viewBox="0 0 40 15">' +
             '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
     }//if aqi

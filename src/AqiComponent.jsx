@@ -77,7 +77,7 @@ class AqiComponent extends React.Component {
   
   useAqiData(geojson) {
     this.props.map.data.addGeoJson(geojson, {idPropertyName: "name" });
-    this.props.addToLegend("Air Quality",  geojson.properties.legend);
+    this.props.addToLegend("Air Quality PM2.5",  geojson.properties.legend);
 
     return geojson;
   }//useAqiData
