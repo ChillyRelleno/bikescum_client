@@ -19,6 +19,7 @@ module.exports = {
   ],
   output: {
 //    publicPath: '/rideonfire/',
+    publicPath: '/',
     path: path.join(__dirname, 'public'),
     filename: '[chunkhash].js'
   },
