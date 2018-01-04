@@ -24,7 +24,8 @@ class GpxFileComponent extends React.Component {
       isFileSelected : false,
       boundingBox : null,
       legend: new Array(),
-      useFireSeasonData: false
+      useFireSeasonData: false,
+      chaseMode: true
     };
     this.parseXml = this.chooseXmlParser();
     //this.state.useFireSeasonData = false;
@@ -117,12 +118,26 @@ class GpxFileComponent extends React.Component {
   handleFireSeasonChange = (isChecked) => {
     this.setState({useFireSeasonData: isChecked});
   }//handlefireseasonchange
-
+  handleChaseModeChange = (isChecked) => {
+    this.setState({chaseMode: isChecked});
+  }
   render() {
     var toDisplay;
-    var selectFile;
+    var selectFile, fileDialog;
     var floatStyle = { position: 'fixed', float: 'right' };
-    var fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
+/*    if (this.props.location.pathname.indexOf("track") != -1) {
+      fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
+                        <Checkbox label="Chase Mode (Auto-zoom)"
+                                handleCheckboxChange={this.handleChaseModeChange}
+                                style={{padding:"0px"}}
+                                checked = {this.state.chaseMode}
+                        />
+                      </form>
+        );
+
+    }
+    else {*/
+      fileDialog = (<form style={floatStyle} id="fileSelectDialog" className="mapControls">
                         <FileReaderInput as="text" id="gpx-file-input"
                           onChange={this.handleFile.bind(this)}>
                           <button type="button">Select GPX file</button>
@@ -137,6 +152,7 @@ class GpxFileComponent extends React.Component {
 			<Link to='/track/phil'></Link>
                       </form>
 	);
+    
 
     if (this.state.isFileSelected == true) {
         selectFile = null;
