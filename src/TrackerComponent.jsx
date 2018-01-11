@@ -14,7 +14,7 @@ class TrackerComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {track : null};
-    this.chaseMode = true;
+    this.chaseMode = false;
     //TODO edit gpx.js to make sure duplicate event listeners arent added
     if (!this.GPX)  this.GPX = new GPX(this.props.map, this.props.google);
 
@@ -40,7 +40,6 @@ class TrackerComponent extends React.Component {
     var interval = 30000;
     this.timer = setInterval( ()=> { 
 	  console.log('updating');
-	  this.GPX.clearMap();
 	  this.getPositionData(url); 
 	}, interval);
   }
@@ -51,7 +50,21 @@ class TrackerComponent extends React.Component {
 	.then(response => response.text())
 	.then(svg => this.updateMarkerIcons(svg))//document.body.insertAdjacentHTML("afterbegin", svg));
         //.then(response => this.updateMarkerIcons(response.body))
-    //this.updateMarkerIcons(url);
+	.then (svg => {
+	    if (!this.chaseMode) {
+ var bounds = this.GPX.calcBounds({type:"FeatureCollection", features:this.json.features})
+    //console.log("bounds " + bounds)
+    //CENTER MAP
+      var latlngBounds = new this.props.google.maps.LatLngBounds();
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:bounds[0], lat:bounds[1] }));
+      latlngBounds.extend(new this.props.google.maps.LatLng({
+                                lng:bounds[2], lat:bounds[3]}));
+
+		this.props.map.fitBounds(latlngBounds, 50)
+
+	    }
+	})
    }
    else { this.updateMarkerIcons(this.svg); }
     //TODO move somewhere that makes sense and gets called once
@@ -121,6 +134,8 @@ class TrackerComponent extends React.Component {
   usePositionData = (json) => {
    if (this.noNewData == false) {
     this.json = json;
+    this.GPX.clearMap();
+
     this.markers =  this.props.map.data.addGeoJson(json);  
     this.getSvg(this.svgUrl);
     this.getRouteData(this.routeUrl);
