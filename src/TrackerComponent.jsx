@@ -7,6 +7,8 @@ import Checkbox from './Checkbox.jsx';
 import geobufFun from './lib/geobufFun.js'
 import config from './config.js';
 import GPX from './lib/gpx.js';
+//import io from 'socket.io';
+import io from 'socket.io-client';
 
 class TrackerComponent extends React.Component {
   //user = "";
@@ -28,20 +30,67 @@ class TrackerComponent extends React.Component {
     var user = "";
 
     user = props.match.params.user;
+
+    var socket = io.connect(config.trackerServerUrl + ":" + config.trackerServerPort);
+    socket.on('connect', () => {
+	socket.emit('room', user);
+    });
+    socket.on('allData', (packet) => {
+     //if (typeof(packet.allData.features)!== undefined)
+     if (packet.allData.features.length > 0)
+      this.usePositionData(packet.allData);
+    })
+    socket.on('updateData', (packet) => {
+      //var data = this.json;
+      if (this.json == null) {this.json = { features: [] }; };
+      if (typeof(this.json.features) == undefined) this.json.features = [];
+      
+      var fc = this.json;
+      
+      var line = fc.features.pop();
+//	fc.features.splice(length-2, length-1);
+      var length = fc.features.length;
+      if (length > 0) {
+      //fc.features[length-1] = packet.updateData;
+      if (length>4) { fc.features.shift(); }
+      fc.features.push(packet.updateData)
+;
+      var opacityLen = length; 
+      if (opacityLen > 5) opacityLen = 5;
+	var i = 0;
+      for (i = 0; i < opacityLen; i++) {
+	var feature = fc.features[length-(i+1)]
+	feature.properties.opacity = 1 - (i *(1/(opacityLen*1.25)))
+      }
+
+      line.geometry.coordinates.push(packet.updateData.geometry.coordinates);
+      fc.features.push(line);
+     }//if not empty
+     else { fc.features.push(packet.updateData) }
+      //fc.features.push(packet.updateData);
+      console.log('new point added');
+      this.usePositionData(fc);
+    })
+    socket.on('updateTime', (packet) => {
+	this.json.features[this.json.features.length-1].properties.time = packet.updateTime;
+	console.log('stationary');
+    })
+
+
     //console.log(this.user);
     this.url = positionDataUrl + "/" + user;
     //console.log(url);
     this.noNewData = false;
-    this.getPositionData(this.url);
+    //this.getPositionData(this.url);
 
   }//constructor
 
   getPositionLoop = (url) => {
     var interval = 30000;
-    this.timer = setInterval( ()=> { 
-	  console.log('updating');
-	  this.getPositionData(url); 
-	}, interval);
+    //this.timer = setInterval( ()=> { 
+	//  console.log('updating');
+	//  this.getPositionData(url); 
+	//}, interval);
   }
 
   getSvg (url) {
@@ -132,7 +181,7 @@ class TrackerComponent extends React.Component {
 
 
   usePositionData = (json) => {
-   if (this.noNewData == false) {
+   //if (this.noNewData == false) {
     this.json = json;
     this.GPX.clearMap();
 
@@ -152,8 +201,10 @@ class TrackerComponent extends React.Component {
 	  this.props.map.fitBounds(latlngBounds, 50)
 	  //this.props.map.setZoom(this.props.map.getZoom()*0.6)
       }}
-   }//!noNewData
+   //}//!noNewData
   }
+  
+
   getPositionData = (url) => {
     this.noNewData = true;
     fetch(url)
