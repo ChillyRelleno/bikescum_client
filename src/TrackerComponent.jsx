@@ -25,15 +25,20 @@ class TrackerComponent extends React.Component {
     this.svgUrl = config.trackerServerUrl + ":" + config.trackerServerPort + "/circle.svg";
     this.routeUrl = config.trackerServerUrl + ":" + config.trackerServerPort + "/route/gpx";
 
-    var positionDataUrl = "http://phillipdaw.com:" + config.trackerServerPort +
-	"/track";
-    var user = "";
-
+    var user = 'tnr';
+    var ride = '1'
     user = props.match.params.user;
+    if (props.match.params.ride != undefined) ride = props.match.params.ride;
+
+    var positionDataUrl = "http://phillipdaw.com:" + config.trackerServerPort +
+	"/track/" + user + "/" + ride;
 
     var socket = io.connect(config.trackerServerUrl + ":" + config.trackerServerPort);
     socket.on('connect', () => {
-	socket.emit('room', user);
+	//if (ride !== '1')
+	  socket.emit('room', user+'.'+ride);
+	//else	socket.emit('room', user);
+
     });
     socket.on('allData', (packet) => {
      //if (typeof(packet.allData.features)!== undefined)
@@ -92,6 +97,13 @@ class TrackerComponent extends React.Component {
 	//  this.getPositionData(url); 
 	//}, interval);
   }
+  
+  addSelfToLegend = (svg) => {
+    var svgLine = '<svg xmlns="http://www.w3.org/2000/svg" opacity="1.00" width="18" height="18"><line x1="0" y1="13.5" x2="18" y2="13.5" stroke-width="2" stroke="blue"></svg>';
+    this.props.addSvgToLegend(" Recent dots", svg);
+    this.props.addSvgToLegend(" Full history", svgLine);
+    return svg;
+  }
 
   getSvg (url) {
    if (!this.svg) {
@@ -122,7 +134,11 @@ class TrackerComponent extends React.Component {
   updateMarkerIcons = (svg) => {
     //var parser = new DOMParser();
     //var doc = parser.parseFromString(svg, "image/svg+xml");
-    if (!this.svg) { this.svg = 'data:image/svg+xml;utf-8, ' + svg; }
+    if (!this.svg) { 
+	this.svg = 'data:image/svg+xml;utf-8, ' + svg; 
+	this.addSelfToLegend(svg);
+
+    }
     this.markers.forEach((feature) => {
 	//marker.setIcon(svg);
         var tempSvg = this.svg.replace('opacity="1.00"', 'opacity="'+feature.getProperty('opacity')+'"')

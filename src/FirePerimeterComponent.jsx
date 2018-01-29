@@ -69,8 +69,10 @@ class FirePerimeterComponent extends React.Component {
   
   usePerimData(geoDraw) {
     //console.log(geoDraw);
-    this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
-    this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
+    if (geoDraw.features.length > 0) {
+      this.props.addToLegend("Fire Perimeters", geoDraw.features[0].properties.color);
+      this.props.map.data.addGeoJson(geoDraw, {idPropertyName: "name"});
+    }
     
     return geoDraw;
   }//useAqiData

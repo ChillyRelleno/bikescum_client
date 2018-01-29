@@ -90,6 +90,9 @@ class GPX {
    
   }//addListeners
 
+  toTwoDecimalPlaces = (number) => {
+    return Math.round(number * 100)/100;
+  }
 
   featureClick = (event) => {
     var message, svg;
@@ -109,12 +112,15 @@ class GPX {
             '<rect x="0" y="5" width="40" height="10" style="fill:'+color+'"/></svg>'
     }//else if fire
     else if (event.feature.getProperty('type') == "pos") {//time') !== undefined) {
-	message = event.feature.getProperty('time');
+        var distance = event.feature.getProperty('sumDistance');//Math.round(event.feature.getProperty('sumDistance')*100)/100;
+	if (distance > 1000) { distance = this.toTwoDecimalPlaces(distance/1000) + "km"; }
+	else { distance = this.toTwoDecimalPlaces(distance) + "m"; }
+	message = "<p>" + event.feature.getProperty('time') + "<br/>" + "Distance so far: " + distance + "</p>";
 	svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">' +
 	'<circle cx="9" cy="9" r="8" data-name="outer" fill="#7EC0EE" stroke="#000" stroke-width="1"/>'+
 	'<circle cx="9" cy="9" r="3" data-name="inner" fill="#fff" stroke="#000" stroke-width="1.5" fill-opacity="0.55"/>'+
 	'</svg>';
-
+	
     }
     else {//GPX
       console.log(event.feature);

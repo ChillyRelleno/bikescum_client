@@ -28,6 +28,21 @@ class Legend {
     controls.push(div)
   }//addtolegend
 
+ addSvgToLegend = (name, svg) => {
+   var div = document.createElement('div');
+    var width = 40;
+    div.innerHTML = svg + name;
+        //'<svg width="' +width + '" height="15" viewBox="0 0 ' + width + ' 15">' +
+        //'<rect x="0" y="5" width="'+width+'" height="10" style="fill:'+color+'"/></svg>'
+        //                + name
+    this.legendDiv.appendChild(div);
+
+    var controls =
+        this.map.controls[google.maps.ControlPosition.TOP_RIGHT].getArray().slice()
+    controls.push(div)
+
+ }
+
  addAqiToLegend = (name, legendEntry) => {
    legendEntry.sort()
    var width = 40;

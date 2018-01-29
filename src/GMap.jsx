@@ -74,6 +74,14 @@ class GMap extends React.Component {
   addAqiToLegend = (name, legendLiteral) => {
     this.legend.addAqiToLegend(name, legendLiteral);
   }//addAqiToLegend
+  addSvgToLegend = (name, svg) => {
+    if (!this.legend) {
+      //LEGEND setup
+      this.legend = new Legend(this.map, this.props.google);//document.getElementById('legend');
+      this.legend.clearLegend();
+    }
+    this.legend.addSvgToLegend(name, svg);
+  }
  
   render() {
     var floatStyle = {
@@ -87,9 +95,10 @@ class GMap extends React.Component {
     var trackerJsx = null, allPerimeters=null;
     if (this.state.mapReady == true) {
 	trackerJsx = (
-            <Route path='/track/:user'
+            <Route path='/track/:user/:ride'
                 render={(props) => <TrackerComponent {...props} google={this.props.google}
-                                        map={this.map} />} />
+                                        map={this.map} 
+					addSvgToLegend={this.addSvgToLegend}/>} />
 	);
 	allPerimeters = (
 	  <Route path='/fireMap' render = { (props) =>
