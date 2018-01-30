@@ -95,7 +95,7 @@ class GMap extends React.Component {
     var trackerJsx = null, allPerimeters=null;
     if (this.state.mapReady == true) {
 	trackerJsx = (
-            <Route path='/track/:user/:ride'
+            <Route path='/track/:user/:ride?'
                 render={(props) => <TrackerComponent {...props} google={this.props.google}
                                         map={this.map} 
 					addSvgToLegend={this.addSvgToLegend}/>} />

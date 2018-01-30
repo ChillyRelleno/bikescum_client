@@ -26,7 +26,7 @@ class TrackerComponent extends React.Component {
     this.routeUrl = config.trackerServerUrl + ":" + config.trackerServerPort + "/route/gpx";
 
     var user = 'tnr';
-    var ride = '1'
+    var ride = 'defaultRide'
     user = props.match.params.user;
     if (props.match.params.ride != undefined) ride = props.match.params.ride;
 
@@ -35,7 +35,7 @@ class TrackerComponent extends React.Component {
 
     var socket = io.connect(config.trackerServerUrl + ":" + config.trackerServerPort);
     socket.on('connect', () => {
-	//if (ride !== '1')
+	//if (ride !== '')
 	  socket.emit('room', user+'.'+ride);
 	//else	socket.emit('room', user);
 
