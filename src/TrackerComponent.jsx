@@ -100,7 +100,7 @@ class TrackerComponent extends React.Component {
   
   addSelfToLegend = (svg) => {
     var svgLine = '<svg xmlns="http://www.w3.org/2000/svg" opacity="1.00" width="18" height="18"><line x1="0" y1="13.5" x2="18" y2="13.5" stroke-width="2" stroke="blue"></svg>';
-    this.props.addSvgToLegend(" Recent dots", svg);
+    this.props.addSvgToLegend(" Recent dots (Click 'em!)", svg);
     this.props.addSvgToLegend(" Full history", svgLine);
     return svg;
   }
